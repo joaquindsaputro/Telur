@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pabrik Konten Telur Misterius</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Slackey&family=Fredoka+One&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --egg-color-1: #FFD700; --egg-color-2: #FFA500;
+            --font-current: 'Slackey', cursive;
+        }
+
+        body {
+            margin: 0; padding: 0; width: 100vw; height: 100dvh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #ff9966, #ff5e62); overflow: hidden;
+            font-family: var(--font-current); transition: background 0.8s;
+            user-select: none; -webkit-user-select: none; touch-action: none;
+        }
+
+        /* --- UI Atas --- */
+        #ui-container { position: absolute; top: 8%; width: 90%; text-align: center; z-index: 100; }
+        #statusText {
+            font-size: 28px; color: white; text-transform: uppercase;
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            margin: 0; padding: 10px; animation: textPulse 1.5s infinite;
+        }
+        @keyframes textPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        /* --- Tombol Menu Tersembunyi (Kiri Atas) --- */
+        #settings-btn {
+            position: absolute; top: 15px; left: 15px; font-size: 20px;
+            opacity: 0.3; z-index: 1000; cursor: pointer; padding: 10px;
+        }
+
+        /* --- Modal Pengaturan --- */
+        #settings-modal {
+            display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 15px;
+            z-index: 2000; width: 80%; max-width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-family: sans-serif; color: #333;
+        }
+        #settings-modal h3 { margin-top: 0; text-align: center; }
+        .setting-row { margin-bottom: 15px; }
+        .setting-row label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        .setting-row select { width: 100%; padding: 8px; border-radius: 8px; font-size: 16px; }
+        #close-settings { width: 100%; padding: 10px; background: #ff5e62; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
+
+        /* --- Telur & Animasi --- */
+        #egg-container { position: relative; width: 250px; height: 320px; cursor: pointer; transform-origin: bottom center; }
+        .egg-svg { width: 100%; height: 100%; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)); }
+        #egg-base { fill: url(#eggGradient); transition: fill 0.5s; }
+        #pattern-dots, #pattern-scales { opacity: 0; transition: opacity 0.5s; }
+        .crack { stroke: #442200; stroke-width: 3; fill: none; opacity: 0; transition: opacity 0.2s; stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+        
+        .animal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            font-size: 100px; opacity: 0; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+        .animal.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
+        /* Simulasi Palu */
+        #tap-feedback { position: absolute; font-size: 50px; pointer-events: none; z-index: 200; opacity: 0; transform: translate(-50%, -50%) rotate(-20deg); filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); }
+        @keyframes tapHammer { 0% { opacity: 1; transform: translate(-50%, -50%) rotate(-20deg) scale(1); } 50% { transform: translate(-50%, -50%) rotate(10deg) scale(1.2); } 100% { opacity: 0; transform: translate(-50%, -50%) rotate(10deg) scale(1); } }
+
+        /* Orbs Energi */
+        .energy-orb { position: absolute; width: 15px; height: 15px; background: white; border-radius: 50%; opacity: 0; z-index: 5; box-shadow: 0 0 10px white; }
+        @keyframes suckEnergy { 0% { transform: translate(var(--startX), var(--startY)) scale(1); opacity: 0.8; } 100% { transform: translate(0, 0) scale(0); opacity: 0; } }
+
+        /* Cheat Zones (Transparan di bawah) */
+        #cheat-zones { position: absolute; bottom: 0; left: 0; width: 100%; height: 15dvh; display: flex; z-index: 1000; opacity: 0; }
+        .cheat-btn { flex: 1; height: 100%; }
+
+        /* Overlay Hitam Awal */
+        #intro-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100dvh; background: rgba(0,0,0,0.85); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; cursor: pointer; text-align: center; font-family: sans-serif; }
+
+        @keyframes shake { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(-8deg); } 40% { transform: rotate(7deg); } 60% { transform: rotate(-5deg); } 80% { transform: rotate(3deg); } }
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes drawCrack { to { stroke-dashoffset: 0; } }
+        .draw { animation: drawCrack 0.3s ease-out forwards; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay">
+        <h1 style="font-size: 40px; margin-bottom: 10px;">🔴 SIAP REKAM?</h1>
+        <p style="font-size: 18px;">Ketuk untuk mulai & Fullscreen.</p>
+    </div>
+
+    <div id="settings-btn" onclick="openSettings()">⭐</div>
+
+    <div id="settings-modal">
+        <h3>Pengaturan Konten</h3>
+        <div class="setting-row">
+            <label>Jenis Font:</label>
+            <select id="sel-font" onchange="updateSettings()">
+                <option value="'Slackey', cursive">Slackey (Playful)</option>
+                <option value="'Fredoka One', cursive">Fredoka One (Tebal)</option>
+                <option value="'Comic Neue', cursive">Comic Neue (Santai)</option>
+            </select>
+        </div>
+        <div class="setting-row">
+            <label>Pengetuk (Alat):</label>
+            <select id="sel-tapper" onchange="updateSettings()">
+                <option value="random">🎲 Ganti Random Tiap Ketuk</option>
+                <option value="🔨">🔨 Palu</option>
+                <option value="🪄">🪄 Tongkat Sihir</option>
+                <option value="🍭">🍭 Lolipop</option>
+                <option value="🍡">🍡 Dango</option>
+                <option value="🪓">🪓 Kapak</option>
+                <option value="⛏️">⛏️ Beliung</option>
+            </select>
+        </div>
+        <div class="setting-row">
+            <label>Suara Ketukan (SFX):</label>
+            <select id="sel-sfx" onchange="updateSettings()">
+                <option value="retro">🎮 Retro / Boop</option>
+                <option value="wood">🪵 Kayu / Tok-tok</option>
+                <option value="magic">✨ Sihir / Ting</option>
+            </select>
+        </div>
+        <button id="close-settings" onclick="closeSettings()">Tutup</button>
+    </div>
+
+    <div id="ui-container"><p id="statusText">Ketuk Telurnya!</p></div>
+    <div id="tap-feedback">🔨</div>
+
+    <div id="egg-container">
+        <div id="energy-container"></div>
+        <div id="animal" class="animal">❓</div>
+        <svg class="egg-svg" viewBox="0 0 200 260">
+            <defs>
+                <radialGradient id="eggGradient" cx="50%" cy="40%" r="50%" fx="50%" fy="30%">
+                    <stop offset="0%" style="stop-color:rgb(255,255,255);stop-opacity:0.3" />
+                    <stop offset="100%" style="stop-color:rgb(0,0,0);stop-opacity:0.1" />
+                </radialGradient>
+                <pattern id="pattern-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="3" fill="rgba(255,255,255,0.5)"/></pattern>
+                <pattern id="pattern-scales" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M0 15 Q 7.5 0, 15 15 T 30 15" fill="none" stroke="rgba(255,215,0,0.7)" stroke-width="2"/></pattern>
+            </defs>
+            <path id="egg-base" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z"/>
+            <path id="egg-pattern-dots" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z" fill="url(#pattern-dots)" style="opacity:0; transition:opacity 0.5s;"/>
+            <path id="egg-pattern-scales" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z" fill="url(#pattern-scales)" style="opacity:0; transition:opacity 0.5s;"/>
+            <path id="crack-1" class="crack" d="M60,60 Q80,80 70,110 T90,150"/>
+            <path id="crack-2" class="crack" d="M140,70 Q120,100 135,130 T110,170"/>
+            <path id="crack-3" class="crack" d="M80,200 Q100,180 130,210 T160,190"/>
+            <path id="crack-4" class="crack" d="M50,150 Q30,170 60,190" style="stroke-width: 2;"/> </svg>
+    </div>
+
+    <div id="cheat-zones">
+        <div class="cheat-btn" onclick="setRarity('common')"></div>
+        <div class="cheat-btn" onclick="setRarity('rare')"></div>
+        <div class="cheat-btn" onclick="setRarity('legendary')"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const eggContainer = document.getElementById('egg-container');
+        const eggBase = document.getElementById('egg-base');
+        const patternDots = document.getElementById('egg-pattern-dots');
+        const patternScales = document.getElementById('egg-pattern-scales');
+        const crackStages = [document.getElementById('crack-1'), document.getElementById('crack-2'), document.getElementById('crack-3'), document.getElementById('crack-4')];
+        const animalDiv = document.getElementById('animal');
+        const statusText = document.getElementById('statusText');
+        const energyContainer = document.getElementById('energy-container');
+        const tapFeedback = document.getElementById('tap-feedback');
+        const introOverlay = document.getElementById('intro-overlay');
+        const modal = document.getElementById('settings-modal');
+
+        let tapCount = 0;
+        let isBroken = false;
+        let isProcessing = false;
+        let forcedRarity = 'common'; 
+
+        // Database dinamis dari CSV
+        let dbAnimals = {
+            common: ['🐔', '🦆', '🐰', '🐱'], // Default jika CSV gagal
+            rare: ['🦊', '🐼', '🦁'],
+            legendary: ['🦄', '🐉', '🦖']
+        };
+
+        const dbColors = {
+            common: ['#8BC34A', '#CDDC39'], rare: ['#2196F3', '#00BCD4'], legendary: ['#FFD700', '#FF9800']
+        };
+
+        const dbTexts = {
+            common: ['Wah, Isinya... 🐥', 'Halo, Teman! 🐭', 'Lucunya! 🐶'],
+            rare: ['KEREN! Dapat... 🐬', 'Ajaib! Spesies Langka! 🦁', 'Wuoow! 🐼'],
+            legendary: ['💥 AJAIB! Legenda... 🦄', 'NAGA! Mitos Nyata! 🐉', 'SUPER LANGKA! 🦖']
+        };
+
+        // Konfigurasi Kustomisasi
+        let cfgFont = "'Slackey', cursive";
+        let cfgTapper = "random";
+        let cfgSfx = "retro";
+        const randomTappers = ['🔨', '🍡', '🥄', '🍭', '🍢', '🪄', '🪓', '⛏️', '🗡️', '🧹'];
+
+        // --- FETCH CSV ---
+        fetch('data.csv')
+            .then(response => response.text())
+            .then(data => {
+                const rows = data.split('\n');
+                rows.forEach(row => {
+                    const cols = row.split(',').map(item => item.trim()).filter(item => item !== "");
+                    if(cols.length > 1) {
+                        const tier = cols[0].toLowerCase();
+                        if(dbAnimals[tier]) { dbAnimals[tier] = cols.slice(1); }
+                    }
+                });
+                console.log("CSV Berhasil Dimuat!", dbAnimals);
+            })
+            .catch(err => console.log("CSV tidak ditemukan, pakai default.", err));
+
+        // Audio Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playCustomTapSound() {
+            const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            if(cfgSfx === 'magic') { osc.type = 'sine'; osc.frequency.setValueAtTime(600 + (tapCount*80), t); osc.frequency.exponentialRampToValueAtTime(1500, t + 0.1); }
+            else if(cfgSfx === 'wood') { osc.type = 'square'; osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(50, t + 0.05); }
+            else { osc.type = 'sine'; osc.frequency.setValueAtTime(200 + (tapCount * 100), t); } // retro
+            gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(t); osc.stop(t + 0.1);
+        }
+        function playHatchSound() {
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime); gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+        }
+
+        // Modals & Settings
+        function openSettings() { modal.style.display = 'block'; }
+        function closeSettings() { modal.style.display = 'none'; }
+        function updateSettings() {
+            cfgFont = document.getElementById('sel-font').value;
+            cfgTapper = document.getElementById('sel-tapper').value;
+            cfgSfx = document.getElementById('sel-sfx').value;
+            document.documentElement.style.setProperty('--font-current', cfgFont);
+        }
+
+        // Intro
+        introOverlay.addEventListener('click', () => {
+            if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            introOverlay.style.display = 'none'; audioCtx.resume(); resetEgg();
+        });
+
+        // Simulasi Palu
+        function showTapFeedback(x, y) {
+            tapFeedback.innerText = cfgTapper === 'random' ? randomTappers[Math.floor(Math.random() * randomTappers.length)] : cfgTapper;
+            tapFeedback.style.left = `${x}px`; tapFeedback.style.top = `${y}px`;
+            tapFeedback.style.animation = 'none'; tapFeedback.offsetHeight; 
+            tapFeedback.style.animation = 'tapHammer 0.2s ease-out forwards';
+        }
+
+        // Ketuk Telur
+        eggContainer.addEventListener('touchstart', (e) => {
+            if (isBroken || isProcessing) return; isProcessing = true;
+            const touch = e.touches[0]; showTapFeedback(touch.clientX, touch.clientY);
+            if (navigator.vibrate) navigator.vibrate(50);
+            playCustomTapSound();
+
+            eggContainer.classList.add('shake'); setTimeout(() => eggContainer.classList.remove('shake'), 400);
+            tapCount++;
+
+            // Dinamis Clicks Required (Req 4)
+            let reqClicks = 4; // Common
+            if(forcedRarity === 'rare') reqClicks = 7;
+            if(forcedRarity === 'legendary') reqClicks = 10;
+
+            if (forcedRarity !== 'common' && tapCount === Math.floor(reqClicks/2)) createEnergyOrbs();
+
+            // Progress Retakan Dinamis
+            const progress = tapCount / reqClicks;
+            const stageIndex = Math.floor(progress * crackStages.length);
+            if (stageIndex > 0 && stageIndex <= crackStages.length) {
+                crackStages[stageIndex - 1].style.opacity = 1;
+                crackStages[stageIndex - 1].style.animation = 'drawCrack 0.3s ease-out forwards';
+            }
+
+            if (tapCount >= reqClicks) hatch();
+            else setTimeout(() => { isProcessing = false; }, 300); // Delay bisa diketuk lagi
+        });
+
+        function createEnergyOrbs() {
+            const orbCount = forcedRarity === 'legendary' ? 20 : 10;
+            const color = forcedRarity === 'legendary' ? 'gold' : 'cyan';
+            for (let i = 0; i < orbCount; i++) {
+                const orb = document.createElement('div'); orb.className = 'energy-orb'; orb.style.background = color; orb.style.boxShadow = `0 0 10px ${color}`;
+                const angle = Math.random() * Math.PI * 2; const dist = 200 + Math.random() * 100;
+                orb.style.setProperty('--startX', `${Math.cos(angle) * dist}px`); orb.style.setProperty('--startY', `${Math.sin(angle) * dist}px`);
+                energyContainer.appendChild(orb);
+                orb.style.animation = `suckEnergy ${0.5 + Math.random() * 0.5}s ease-in forwards`;
+                setTimeout(() => orb.remove(), 1000);
+            }
+        }
+
+        function hatch() {
+            isBroken = true;
+            eggBase.style.opacity = 0; patternDots.style.opacity = 0; patternScales.style.opacity = 0;
+            crackStages.forEach(c => c.style.opacity = 0);
+            
+            const listHewan = dbAnimals[forcedRarity];
+            const animal = listHewan[Math.floor(Math.random() * listHewan.length)];
+            const text = dbTexts[forcedRarity][Math.floor(Math.random() * dbTexts[forcedRarity].length)];
+            
+            animalDiv.innerText = animal; animalDiv.classList.add('show');
+            statusText.innerText = text;
+            document.body.style.background = `radial-gradient(circle, ${dbColors[forcedRarity][0]}, ${dbColors[forcedRarity][1]})`;
+
+            playHatchSound();
+            confetti({ particleCount: forcedRarity === 'legendary' ? 200 : 100, spread: 70, origin: { y: 0.7 }, colors: dbColors[forcedRarity] });
+            isProcessing = false;
+        }
+
+        function setRarity(rarity) {
+            if (isBroken) { forcedRarity = rarity; resetEgg(); return; }
+            forcedRarity = rarity;
+            playCustomTapSound(); updateEggVisual();
+            statusText.innerText = `Siap Mentaskan: ${rarity.toUpperCase()}`;
+        }
+
+        function updateEggVisual() {
+            patternDots.style.opacity = 0; patternScales.style.opacity = 0;
+            if (forcedRarity === 'rare') { eggBase.style.fill = "url(#eggGradient)"; patternDots.style.opacity = 1; document.documentElement.style.setProperty('--egg-color-1', dbColors.rare[0]); }
+            else if (forcedRarity === 'legendary') { eggBase.style.fill = "url(#eggGradient)"; patternScales.style.opacity = 1; document.documentElement.style.setProperty('--egg-color-1', dbColors.legendary[0]); }
+            else { eggBase.style.fill = "url(#eggGradient)"; document.documentElement.style.setProperty('--egg-color-1', '#FFD700'); }
+        }
+
+        function resetEgg() {
+            tapCount = 0; isBroken = false; isProcessing = false; animalDiv.classList.remove('show');
+            eggBase.style.opacity = 1; crackStages.forEach(c => { c.style.opacity = 0; c.style.animation = 'none'; });
+            document.body.style.background = 'radial-gradient(circle, #ff9966, #ff5e62)';
+            statusText.innerText = "Ketuk Telurnya!"; updateEggVisual(); energyContainer.innerHTML = '';
+        }
+    </script>
+</body>
+</html>
