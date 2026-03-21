@@ -10,7 +10,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Slackey&family=Fredoka+One&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Caveat+Brush&family=Fredoka+One&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -19,7 +19,7 @@
             --crack-glow: #ffeb3b;
             --ground-color-top: #4caf50;
             --ground-color-bottom: #2e7d32;
-            --font-current: 'Fredoka One', cursive; /* Default font diperbarui */
+            --font-current: 'Bangers', cursive; /* Default font baru */
         }
 
         * { box-sizing: border-box; }
@@ -34,7 +34,7 @@
         body.legendary-mode { animation: none; background: radial-gradient(circle, #fff700, #ff8c00); }
         @keyframes skyCycle { 0% { background: #87CEEB; } 40% { background: #ff7e5f; } 50% { background: #1a1a2e; } 90% { background: #3a4e5a; } 100% { background: #87CEEB; } }
 
-        /* --- PEMANDANGAN (Diangkat ke tengah) --- */
+        /* --- PEMANDANGAN --- */
         .cloud { position: absolute; font-size: 60px; opacity: 0.7; animation: floatCloud linear infinite; z-index: 0; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(255,255,255,0.3)); }
         .c1 { top: 10%; left: -20%; animation-duration: 45s; font-size: 80px; }
         .c2 { top: 25%; left: -20%; animation-duration: 35s; animation-delay: 15s; }
@@ -49,7 +49,6 @@
         @keyframes spinSun { to { transform: rotate(360deg); } }
         .moon-emoji { bottom: 0; transform: rotate(180deg); filter: drop-shadow(0 0 20px #ffffff); }
 
-        /* Posisi tanah dan pohon dinaikkan */
         .scenery-wrapper { position: absolute; bottom: 22vh; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; height: 300px; pointer-events: none; z-index: 1; }
         .big-mountain { position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); font-size: 280px; z-index: 1; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2)); white-space: nowrap; }
         .static-tree { position: absolute; bottom: -5px; font-size: 80px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); z-index: 2; }
@@ -59,20 +58,22 @@
         /* --- GAME AREA --- */
         .game-area-centered { position: absolute; bottom: 20vh; left: 50%; transform: translateX(-50%); width: 200px; height: 260px; z-index: 10; display: flex; justify-content: center; }
         
-        /* Teks Instruksi Kartun Super Mencolok */
+        /* Teks Kuning Solid dengan Shadow Tegas */
         .instruction { 
             position: absolute; top: -140px; left: 50%; transform: translateX(-50%);
-            color: #FFF200; /* Kuning terang */
-            -webkit-text-stroke: 2px #FF3300; /* Outline oranye/merah tebal */
-            text-shadow: 4px 4px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000, 2px 2px 0px #000, 5px 5px 10px rgba(0,0,0,0.6);
-            font-size: 40px; font-weight: 900; white-space: pre-wrap; text-align: center;
+            color: #FFDE00; /* Kuning Polos */
+            -webkit-text-stroke: 2px #000;
+            text-shadow: 6px 6px 0px #000; /* Shadow tegas ala komik */
+            font-size: 50px; font-weight: 900; white-space: pre-wrap; text-align: center;
             line-height: 1.1; width: 90vw; pointer-events: none; transition: all 0.2s; z-index: 15;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
         }
 
         .egg-shadow { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); width: 140px; height: 30px; background: rgba(0,0,0,0.4); border-radius: 50%; z-index: 4; filter: blur(5px); }
         .egg-container { width: 100%; height: 100%; position: relative; cursor: pointer; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.4)); z-index: 5; }
-        .egg-base { width: 100%; height: 100%; background: var(--egg-gradient); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: absolute; top:0; left:0; box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 20px 20px rgba(0,0,0,0.4); overflow: hidden; z-index: 5; transition: filter 0.5s; }
+        
+        .egg-base { width: 100%; height: 100%; background: var(--egg-gradient); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: absolute; top:0; left:0; box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 20px 20px rgba(0,0,0,0.4); overflow: hidden; z-index: 5; }
+        /* Layer untuk Tekstur */
         .egg-base::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' opacity='0.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E"); mix-blend-mode: overlay; }
         
         .crack-overlay-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6; filter: drop-shadow(0 0 8px var(--crack-glow)); }
@@ -90,27 +91,29 @@
         
         .shard { position: absolute; background: var(--egg-gradient); clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); pointer-events: none; z-index: 20; }
         
-        /* Tombol Reset dinaikkan posisinya dan z-index di-max agar di atas cheat zone */
-        #resetBtn { display: none; position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); padding: 15px 40px; font-size: 20px; font-weight: bold; background: linear-gradient(45deg, #FFD700, #FF8C00); color: #4a0000; border: 3px solid #fff; border-radius: 50px; cursor: pointer; z-index: 2000; box-shadow: 0 0 15px #FFD700; white-space: nowrap; transition: transform 0.2s; }
-        #resetBtn:active { transform: translateX(-50%) scale(0.95); }
-
-        /* Overlay Awal (Fullscreen) */
+        /* Overlay Awal */
         #intro-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100dvh; background: rgba(0,0,0,0.85); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; cursor: pointer; text-align: center; font-family: sans-serif; }
         
-        /* Menu Settings (Bintang Kiri Atas) */
+        /* Menu Settings */
         #settings-btn { position: absolute; top: 15px; left: 15px; font-size: 25px; opacity: 0.5; z-index: 2000; cursor: pointer; padding: 10px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); }
         #settings-modal { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 15px; z-index: 3000; width: 85%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: sans-serif; color: #333; }
         #settings-modal h3 { margin-top: 0; text-align: center; }
         .setting-row { margin-bottom: 15px; } .setting-row label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; } .setting-row select { width: 100%; padding: 8px; border-radius: 8px; font-size: 16px; }
         #close-settings { width: 100%; padding: 10px; background: #ff5e62; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
 
-        /* Cheat Zones */
+        /* Cheat Zones (Transparan, pengganti reset) */
         #cheat-zones { position: absolute; bottom: 0; left: 0; width: 100%; height: 15dvh; display: flex; z-index: 1000; opacity: 0; }
         .cheat-btn { flex: 1; height: 100%; }
 
-        /* Feedback Ketukan (Palu dll) */
-        #tap-feedback { position: absolute; font-size: 50px; pointer-events: none; z-index: 500; opacity: 0; transform: translate(-50%, -50%) rotate(-20deg); filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); }
-        @keyframes tapHammer { 0% { opacity: 1; transform: translate(-50%, -50%) rotate(-20deg) scale(1); } 50% { transform: translate(-50%, -50%) rotate(10deg) scale(1.2); } 100% { opacity: 0; transform: translate(-50%, -50%) rotate(10deg) scale(1); } }
+        /* Kursor Dinamis (Tongkat/Palu) */
+        #tap-feedback { 
+            position: fixed; font-size: 70px; pointer-events: none; z-index: 5000; 
+            opacity: 0; transform-origin: bottom right; 
+            transform: translate(-30%, -80%) rotate(0deg); 
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+            transition: opacity 0.1s ease-out;
+        }
+        
         .energy-orb { position: absolute; width: 15px; height: 15px; background: white; border-radius: 50%; opacity: 0; z-index: 15; box-shadow: 0 0 10px white; }
         @keyframes suckEnergy { 0% { transform: translate(var(--startX), var(--startY)) scale(1); opacity: 0.8; } 100% { transform: translate(0, 0) scale(0); opacity: 0; } }
 
@@ -136,10 +139,10 @@
         <div class="setting-row">
             <label>Jenis Font:</label>
             <select id="sel-font" onchange="updateSettings()">
-                <option value="'Fredoka One', cursive">Tebal (Fredoka)</option>
-                <option value="'Slackey', cursive">Lucu (Slackey)</option>
-                <option value="'Comic Neue', cursive">Santai (Comic)</option>
-                <option value="sans-serif">Standar (Sans)</option>
+                <option value="'Bangers', cursive">Bangers (Komik)</option>
+                <option value="'Caveat Brush', cursive">Caveat (Kuas)</option>
+                <option value="'Fredoka One', cursive">Fredoka (Tebal)</option>
+                <option value="'Mochiy Pop One', sans-serif">Mochiy (Jepang)</option>
             </select>
         </div>
         <div class="setting-row">
@@ -170,7 +173,20 @@
         <div class="egg-shadow" id="eggShadow"></div>
         <div class="egg-container" id="eggContainer" onclick="tapEgg(event)">
              <div class="egg-base" id="eggBase"></div>
+             
              <svg class="crack-overlay-svg" viewBox="0 0 200 260">
+                <defs>
+                    <pattern id="pat-rare" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <circle cx="10" cy="10" r="4" fill="rgba(255,255,255,0.4)"/>
+                    </pattern>
+                    <pattern id="pat-legend" width="30" height="30" patternUnits="userSpaceOnUse">
+                        <path d="M0 15 Q 7.5 0, 15 15 T 30 15" fill="none" stroke="rgba(255,215,0,0.8)" stroke-width="3"/>
+                        <path d="M0 30 Q 7.5 15, 15 30 T 30 30" fill="none" stroke="rgba(255,215,0,0.8)" stroke-width="3"/>
+                    </pattern>
+                </defs>
+                <path id="egg-pattern-dots" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z" fill="url(#pat-rare)" style="opacity:0; transition:opacity 0.3s;" pointer-events="none"/>
+                <path id="egg-pattern-scales" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z" fill="url(#pat-legend)" style="opacity:0; transition:opacity 0.3s;" pointer-events="none"/>
+
                 <g class="crack-group" id="stage1"><path class="crack-path" d="M 100 130 L 85 105 M 100 130 L 120 145 M 100 130 L 105 160" stroke-width="2" /></g>
                 <g class="crack-group" id="stage2"><path class="crack-path" d="M 85 105 L 60 90 M 85 105 L 75 70" stroke-width="2.5" /><path class="crack-path" d="M 120 145 L 150 135 M 120 145 L 140 175" stroke-width="2.5" /><path class="crack-path" d="M 105 160 L 90 190" stroke-width="2.5" /></g>
                 <g class="crack-group" id="stage3"><path class="crack-path" d="M 60 90 L 30 100 M 75 70 L 80 40" stroke-width="3" /><path class="crack-path" d="M 150 135 L 180 120 M 140 175 L 160 210" stroke-width="3" /><path class="crack-path" d="M 90 190 L 100 230 M 90 190 L 60 210" stroke-width="3" /></g>
@@ -180,7 +196,6 @@
     </div>
     
     <div class="animal-reveal" id="animalContent"></div>
-    <button id="resetBtn" onclick="resetGame()"></button>
 
     <div id="cheat-zones">
         <div class="cheat-btn" onclick="setRarity('common')"></div>
@@ -197,7 +212,6 @@
         const crackStages = [document.getElementById('stage1'), document.getElementById('stage2'), document.getElementById('stage3'), document.getElementById('stage4')];
         const animalDiv = document.getElementById('animalContent');
         const statusText = document.getElementById('statusText');
-        const resetBtn = document.getElementById('resetBtn');
         const tapFeedback = document.getElementById('tap-feedback');
         const gameArea = document.getElementById('gameArea');
         const introOverlay = document.getElementById('intro-overlay');
@@ -205,16 +219,9 @@
         let forcedRarity = 'common'; 
         const randomTappers = ['🔨', '🍡', '🥄', '🍭', '🍢', '🪄', '🪓', '⛏️', '🗡️', '🧹'];
 
-        // Dictionary Bahasa
         const dict = {
-            id: {
-                start: "Ketuk\nTelurnya!", keep: "Terus\nKetuk!", harder: "Lebih\nKuat!", almost: "Sedikit\nLagi!",
-                speciesCommon: "Wah,\nIsinya...", speciesRare: "Spesies\nLangka!", speciesLegend: "LEGENDARY!", btnNew: "Cari Telur Baru"
-            },
-            en: {
-                start: "Tap the\nEgg!", keep: "Keep\nTapping!", harder: "Hit\nHarder!", almost: "Almost\nThere!",
-                speciesCommon: "Wow,\nIt's...", speciesRare: "Rare\nSpecies!", speciesLegend: "LEGENDARY!", btnNew: "Find New Egg"
-            }
+            id: { start: "Ketuk\nTelurnya!", keep: "Terus\nKetuk!", harder: "Lebih\nKuat!", almost: "Sedikit\nLagi!", speciesCommon: "Wah,\nIsinya...", speciesRare: "Spesies\nLangka!", speciesLegend: "LEGENDARY!" },
+            en: { start: "Tap the\nEgg!", keep: "Keep\nTapping!", harder: "Hit\nHarder!", almost: "Almost\nThere!", speciesCommon: "Wow,\nIt's...", speciesRare: "Rare\nSpecies!", speciesLegend: "LEGENDARY!" }
         };
 
         let dbAnimals = {
@@ -231,22 +238,16 @@
             });
         }).catch(err => console.log("CSV gagal, pakai default."));
 
-        // --- LOCAL STORAGE LOGIC ---
         let cfgLang = localStorage.getItem('cfgLang') || 'id';
-        let cfgFont = localStorage.getItem('cfgFont') || "'Fredoka One', cursive";
+        let cfgFont = localStorage.getItem('cfgFont') || "'Bangers', cursive";
         let cfgTapper = localStorage.getItem('cfgTapper') || 'none';
 
-        // Set UI dropdowns on load
         document.getElementById('sel-lang').value = cfgLang;
         document.getElementById('sel-font').value = cfgFont;
         document.getElementById('sel-tapper').value = cfgTapper;
 
-        function applyLanguage() {
-            statusText.innerText = dict[cfgLang].start;
-            resetBtn.innerText = dict[cfgLang].btnNew;
-        }
+        function applyLanguage() { statusText.innerText = dict[cfgLang].start; }
 
-        // Apply settings initially
         document.documentElement.style.setProperty('--font-current', cfgFont);
         applyLanguage();
 
@@ -258,13 +259,9 @@
             cfgFont = document.getElementById('sel-font').value;
             cfgTapper = document.getElementById('sel-tapper').value;
             
-            // Save to LocalStorage
-            localStorage.setItem('cfgLang', cfgLang);
-            localStorage.setItem('cfgFont', cfgFont);
-            localStorage.setItem('cfgTapper', cfgTapper);
-
+            localStorage.setItem('cfgLang', cfgLang); localStorage.setItem('cfgFont', cfgFont); localStorage.setItem('cfgTapper', cfgTapper);
             document.documentElement.style.setProperty('--font-current', cfgFont);
-            if(!isBroken && clicks === 0) applyLanguage(); // Update text immediately if fresh
+            if(!isBroken && clicks === 0) applyLanguage(); 
         }
 
         introOverlay.addEventListener('click', () => {
@@ -272,15 +269,40 @@
             introOverlay.style.display = 'none'; initAudio();
         });
 
-        // Cheat Zone (HANYA GANTI VISUAL TELUR, TANPA GANTI TEKS)
+        // --- MEKANIK RESET & TIER BARU ---
         function setRarity(rarity) {
-            if (isBroken) return;
             forcedRarity = rarity;
-            // Secret visual cue for the creator
-            if(rarity === 'rare') eggBase.style.filter = "hue-rotate(90deg) brightness(1.2)";
-            else if(rarity === 'legendary') eggBase.style.filter = "contrast(1.5) drop-shadow(0 0 10px gold)";
-            else eggBase.style.filter = "none";
+            resetGame(); // Otomatis reset memunculkan telur baru dengan tier yang ditekan
         }
+
+        // --- KURSOR / PENGETUK LOGIC ---
+        let isPointerDown = false;
+        
+        window.addEventListener('pointerdown', (e) => {
+            if(cfgTapper === 'none') return;
+            isPointerDown = true;
+            
+            // Set emoji
+            tapFeedback.innerText = cfgTapper === 'random' ? randomTappers[Math.floor(Math.random() * randomTappers.length)] : cfgTapper;
+            
+            // Tampilkan di posisi
+            tapFeedback.style.transition = 'opacity 0.1s ease-out';
+            tapFeedback.style.opacity = 1;
+            tapFeedback.style.left = e.clientX + 'px';
+            tapFeedback.style.top = e.clientY + 'px';
+            tapFeedback.style.transform = 'translate(-30%, -80%) rotate(0deg)';
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!isPointerDown || cfgTapper === 'none') return;
+            tapFeedback.style.left = e.clientX + 'px';
+            tapFeedback.style.top = e.clientY + 'px';
+        });
+
+        window.addEventListener('pointerup', () => {
+            isPointerDown = false;
+            tapFeedback.style.opacity = 0;
+        });
 
         function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } if (audioCtx.state === 'suspended') { audioCtx.resume(); }}
         
@@ -304,13 +326,6 @@
             osc.connect(gain); gain.connect(audioCtx.destination); osc.start(t); osc.stop(t + (isLegendary ? 0.8 : 0.4));
         }
 
-        function showTapFeedback(x, y) {
-            if (cfgTapper === 'none') return;
-            tapFeedback.innerText = cfgTapper === 'random' ? randomTappers[Math.floor(Math.random() * randomTappers.length)] : cfgTapper;
-            tapFeedback.style.left = `${x}px`; tapFeedback.style.top = `${y}px`; tapFeedback.style.animation = 'none'; tapFeedback.offsetHeight; 
-            tapFeedback.style.animation = 'tapHammer 0.2s ease-out forwards';
-        }
-
         function createEnergyOrbs() {
             const orbCount = forcedRarity === 'legendary' ? 20 : 10; const color = forcedRarity === 'legendary' ? 'gold' : 'cyan';
             for (let i = 0; i < orbCount; i++) {
@@ -328,9 +343,17 @@
 
             initAudio(); clicks++; playCrackSound(clicks/maxClicks);
             
-            let touchX = event.clientX || (event.touches && event.touches[0].clientX);
-            let touchY = event.clientY || (event.touches && event.touches[0].clientY);
-            if(touchX && touchY) showTapFeedback(touchX, touchY);
+            // Animasi memukul (-50 deg)
+            if(cfgTapper !== 'none') {
+                tapFeedback.style.transition = 'transform 0.05s ease-out';
+                tapFeedback.style.transform = 'translate(-30%, -80%) rotate(-50deg)';
+                setTimeout(() => {
+                    if(isPointerDown) {
+                        tapFeedback.style.transition = 'transform 0.1s ease-in';
+                        tapFeedback.style.transform = 'translate(-30%, -80%) rotate(0deg)';
+                    }
+                }, 100);
+            }
 
             if (navigator.vibrate) navigator.vibrate(50);
 
@@ -355,22 +378,11 @@
         function breakEgg() {
             isBroken = true; 
             eggBase.style.opacity = '0'; crackStages.forEach(s => s.style.opacity = 0); eggShadow.style.opacity = '0';
+            document.getElementById('egg-pattern-dots').style.opacity = 0; document.getElementById('egg-pattern-scales').style.opacity = 0;
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
             
-            // Apply text from dictionary based on tier
-            if (forcedRarity === 'legendary') { 
-                statusText.innerText = dict[cfgLang].speciesLegend; 
-                statusText.style.color = '#FFF';
-                statusText.style.webkitTextStroke = '2px #000';
-                document.body.classList.add('legendary-mode'); 
-            }
-            else if (forcedRarity === 'rare') { 
-                statusText.innerText = dict[cfgLang].speciesRare;
-                statusText.style.color = '#00FFFF';
-                statusText.style.webkitTextStroke = '2px #00008B';
-            } else {
-                statusText.innerText = dict[cfgLang].speciesCommon;
-            }
+            if (forcedRarity === 'legendary') document.body.classList.add('legendary-mode'); 
+            statusText.innerText = dict[cfgLang][forcedRarity === 'legendary' ? 'speciesLegend' : (forcedRarity === 'rare' ? 'speciesRare' : 'speciesCommon')];
 
             createExplodingShards(); 
             
@@ -382,7 +394,7 @@
             const particleAmt = forcedRarity === 'legendary' ? 300 : 150;
             confetti({ particleCount: particleAmt, spread: 80, origin: { y: 0.6 }, colors: forcedRarity === 'legendary' ? ['#FFD700', '#FFA500', '#FFFFFF'] : ['#FFD700', '#00FFFF', '#FF00FF'] });
             
-            setTimeout(() => { resetBtn.style.display = 'block'; isProcessing = false; }, 1200);
+            setTimeout(() => { isProcessing = false; }, 1200);
         }
 
         function createExplodingShards() {
@@ -400,23 +412,31 @@
 
         function resetGame() {
             clicks = 0; isBroken = false; isProcessing = false; 
-            applyLanguage(); // Reset text ke bahasa yang dipilih
-            statusText.style.color = '#FFF200'; statusText.style.webkitTextStroke = '2px #FF3300'; // Reset warna teks
+            applyLanguage(); 
             
-            resetBtn.style.display = 'none'; 
-            eggBase.style.opacity = '1'; eggBase.style.filter = 'none'; eggShadow.style.opacity = '1';
+            eggBase.style.opacity = '1'; eggShadow.style.opacity = '1';
             crackStages.forEach(s => s.style.opacity = 0); 
             animalDiv.classList.remove('show'); 
             document.body.classList.remove('legendary-mode');
-            forcedRarity = 'common'; 
-            changeEggColor();
-        }
 
-        function changeEggColor() {
-            const gradients = ['linear-gradient(135deg, #ff00cc, #333399)', 'linear-gradient(45deg, #11998e, #38ef7d)', 'radial-gradient(circle, #ff9966, #ff5e62)', 'linear-gradient(to top, #200122, #6f0000)', 'linear-gradient(to bottom, #00c6ff, #0072ff)'];
-            const rand = gradients[Math.floor(Math.random() * gradients.length)]; document.documentElement.style.setProperty('--egg-gradient', rand);
+            // --- Atur Corak Telur Visual ---
+            const pDots = document.getElementById('egg-pattern-dots');
+            const pScales = document.getElementById('egg-pattern-scales');
+            pDots.style.opacity = 0; pScales.style.opacity = 0;
+
+            if (forcedRarity === 'rare') {
+                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #11998e, #38ef7d)'); // Hijau keren
+                pDots.style.opacity = 0.6; // Polkadot
+            } else if (forcedRarity === 'legendary') {
+                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(to top, #200122, #6f0000)'); // Merah/Emas gelap
+                pScales.style.opacity = 0.8; // Sisik Naga
+            } else {
+                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #ff00cc, #333399)'); // Ungu default
+            }
         }
-        changeEggColor();
+        
+        // Render inisial corak
+        resetGame();
 
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Gagal:', err)); }); }
     </script>
