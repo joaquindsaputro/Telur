@@ -1,0 +1,21 @@
+{
+  "name": "Pabrik Konten Telur Misterius",
+  "short_name": "TelurStudio",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "background_color": "#ff5e62",
+  "theme_color": "#FFD700",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/128x128/1f95a.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/512x512/1f95a.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
