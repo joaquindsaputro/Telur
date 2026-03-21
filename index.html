@@ -19,7 +19,7 @@
             --crack-glow: #ffeb3b;
             --ground-color-top: #4caf50;
             --ground-color-bottom: #2e7d32;
-            --font-current: 'Bangers', cursive; /* Default font baru */
+            --font-current: 'Bangers', cursive;
         }
 
         * { box-sizing: border-box; }
@@ -32,13 +32,7 @@
         }
 
         body.legendary-mode { animation: none; background: radial-gradient(circle, #fff700, #ff8c00); }
-        @keyframes skyCycle { 
-            0% { background: #87CEEB; }   /* Matahari pas di atas (Siang Terik) */
-            25% { background: #ff7e5f; }  /* Matahari terbenam (Sore/Sunset) */
-            50% { background: #1a1a2e; }  /* Bulan pas di atas (Tengah Malam) */
-            75% { background: #3a4e5a; }  /* Matahari mulai terbit (Pajar/Sunrise) */
-            100% { background: #87CEEB; } /* Kembali Siang */
-        }
+        @keyframes skyCycle { 0% { background: #87CEEB; } 25% { background: #ff7e5f; } 50% { background: #1a1a2e; } 75% { background: #3a4e5a; } 100% { background: #87CEEB; } }
 
         /* --- PEMANDANGAN --- */
         .cloud { position: absolute; font-size: 60px; opacity: 0.7; animation: floatCloud linear infinite; z-index: 0; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(255,255,255,0.3)); }
@@ -64,24 +58,57 @@
         /* --- GAME AREA --- */
         .game-area-centered { position: absolute; bottom: 20vh; left: 50%; transform: translateX(-50%); width: 200px; height: 260px; z-index: 10; display: flex; justify-content: center; }
         
-        /* Teks Kuning Solid dengan Shadow Tegas */
         .instruction { 
             position: absolute; top: -140px; left: 50%; transform: translateX(-50%);
-            color: #FFDE00; /* Kuning Polos */
-            -webkit-text-stroke: 2px #000;
-            text-shadow: 3px 3px 0px #000; /* Shadow tegas ala komik */
+            color: #FFDE00; -webkit-text-stroke: 2px #000; text-shadow: 3px 3px 0px #000;
             font-size: 50px; font-weight: 900; white-space: pre-wrap; text-align: center;
-            line-height: 1.1; width: 90vw; pointer-events: none; transition: all 0.2s; z-index: 15;
-            letter-spacing: 3px;
+            line-height: 1.1; width: 90vw; pointer-events: none; transition: all 0.2s; z-index: 15; letter-spacing: 3px;
         }
 
         .egg-shadow { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); width: 140px; height: 30px; background: rgba(0,0,0,0.4); border-radius: 50%; z-index: 4; filter: blur(5px); }
         .egg-container { width: 100%; height: 100%; position: relative; cursor: pointer; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.4)); z-index: 5; }
         
-        .egg-base { width: 100%; height: 100%; background: var(--egg-gradient); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: absolute; top:0; left:0; box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 20px 20px rgba(0,0,0,0.4); overflow: hidden; z-index: 5; }
-        /* Layer untuk Tekstur */
+        /* Base Telur */
+        .egg-base { 
+            width: 100%; height: 100%; background: var(--egg-gradient); 
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: absolute; top:0; left:0; 
+            box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 20px 20px rgba(0,0,0,0.4); 
+            overflow: hidden; z-index: 5; 
+        }
+        /* Layer Tekstur Noise (tetap menimpa pattern css apa pun) */
         .egg-base::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' opacity='0.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E"); mix-blend-mode: overlay; }
         
+        /* --- 5 CORAK LEGENDARY CSS MURNI --- */
+        .egg-base.pat-1 {
+            --_g: var(--c1) 0% 5%,var(--c2) 6% 15%,var(--c1) 16% 25%,var(--c2) 26% 35%,var(--c1) 36% 45%,var(--c2) 46% 55%,var(--c1) 56% 65%,var(--c2) 66% 75%,var(--c1) 76% 85%,var(--c2) 86% 95%,#0000 96%;
+            background: radial-gradient(50% 50% at 100% 0,var(--_g)), radial-gradient(50% 50% at 0 100%,var(--_g)), radial-gradient(50% 50%,var(--_g)), radial-gradient(50% 50%,var(--_g)) calc(var(--s)/2) calc(var(--s)/2) var(--c1);
+            background-size: var(--s) var(--s);
+        }
+        .egg-base.pat-2 {
+            --_g: var(--c1) 6.1%,var(--c2) 6.4% 18.6%,var(--c1) 18.9% 31.1%,var(--c2) 31.4% 43.6%,var(--c1) 43.9% 56.1%,var(--c2) 56.4% 68.6%,#0000 68.9%;
+            background: radial-gradient(var(--s) at 100% 0,var(--_g)), radial-gradient(var(--s) at 0 0,var(--_g)), radial-gradient(var(--s) at 0 100%,var(--_g)), radial-gradient(var(--s) at 100% 100%,var(--_g)) var(--c1);
+            background-size: var(--s) var(--s);
+        }
+        .egg-base.pat-3 {
+            --_g: #0000 25%,#0008 47%,var(--c1) 53% 147%,var(--c2) 153% 247%,var(--c1) 253% 347%,var(--c2) 353% 447%,var(--c1) 453% 547%,#0008 553%,#0000 575%;
+            --_s: calc(25%/3) calc(25%/4) at 50%;
+            background: radial-gradient(var(--_s) 100%,var(--_g)), radial-gradient(var(--_s) 100%,var(--_g)) calc(var(--s)/2) calc(3*var(--s)/4), radial-gradient(var(--_s) 0,var(--_g)) calc(var(--s)/2) 0, radial-gradient(var(--_s) 0,var(--_g)) 0 calc(3*var(--s)/4), repeating-linear-gradient(90deg,var(--c3) calc(25%/-6) calc(25%/6),var(--c4) 0 calc(25%/2));
+            background-size: var(--s) calc(3*var(--s)/2);
+        }
+        .egg-base.pat-4 {
+            --_s: 37.5% 12.5% at 62.5%; --_g: 34% 99%,#0000 101%;
+            --g1: radial-gradient(var(--_s) 100%,#0000 32%,var(--c1) var(--_g)); --g2: radial-gradient(var(--_s) 0,#0000 32%,var(--c1) var(--_g));
+            --g3: radial-gradient(var(--_s) 100%,#0000 32%,var(--c2) var(--_g)); --g4: radial-gradient(var(--_s) 0,#0000 32%,var(--c2) var(--_g));
+            background: var(--g1), var(--g2) 0 calc(3*var(--s)), var(--g3) var(--s) calc(3*var(--s)), var(--g4) var(--s) calc(6*var(--s)), var(--g1) calc(2*var(--s)) calc(6*var(--s)), var(--g2) calc(2*var(--s)) calc(9*var(--s)), var(--g3) calc(3*var(--s)) calc(9*var(--s)), var(--g4) calc(3*var(--s)) 0, repeating-linear-gradient(var(--c1) 0 25%,var(--c2) 0 50%);
+            background-size: calc(4*var(--s)) calc(12*var(--s));
+        }
+        .egg-base.pat-5 {
+            --_g: #0000 24%,var(--c2) 26% 34%,var(--c1) 36% 44%,var(--c2) 46% 54%,var(--c1) 56% 64%,var(--c2) 66% 74%,#0000 76%;
+            background: radial-gradient(100% 100% at 100% 0,var(--_g)), radial-gradient(100% 100% at 0 100%,var(--_g)), radial-gradient(var(--c2) 14%,var(--c1) 16%) calc(var(--s)/2) calc(var(--s)/2);
+            background-size: var(--s) var(--s);
+        }
+        /* ------------------------------- */
+
         .crack-overlay-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6; filter: drop-shadow(0 0 8px var(--crack-glow)); }
         .crack-group { opacity: 0; transition: opacity 0.1s; }
         .crack-path { fill: none; stroke: var(--crack-glow); stroke-linecap: round; stroke-linejoin: round; }
@@ -97,21 +124,17 @@
         
         .shard { position: absolute; background: var(--egg-gradient); clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); pointer-events: none; z-index: 20; }
         
-        /* Overlay Awal */
         #intro-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100dvh; background: rgba(0,0,0,0.85); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; cursor: pointer; text-align: center; font-family: sans-serif; }
         
-        /* Menu Settings */
         #settings-btn { position: absolute; top: 15px; left: 15px; font-size: 25px; opacity: 0.5; z-index: 2000; cursor: pointer; padding: 10px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); }
         #settings-modal { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 15px; z-index: 3000; width: 85%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: sans-serif; color: #333; }
         #settings-modal h3 { margin-top: 0; text-align: center; }
         .setting-row { margin-bottom: 15px; } .setting-row label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; } .setting-row select { width: 100%; padding: 8px; border-radius: 8px; font-size: 16px; }
         #close-settings { width: 100%; padding: 10px; background: #ff5e62; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
 
-        /* Cheat Zones (Transparan, pengganti reset) */
         #cheat-zones { position: absolute; bottom: 0; left: 0; width: 100%; height: 15dvh; display: flex; z-index: 1000; opacity: 0; }
         .cheat-btn { flex: 1; height: 100%; }
 
-        /* Kursor Dinamis (Tongkat/Palu) */
         #tap-feedback { 
             position: fixed; font-size: 70px; pointer-events: none; z-index: 5000; 
             opacity: 0; transform-origin: bottom right; 
@@ -185,13 +208,8 @@
                     <pattern id="pat-rare" width="20" height="20" patternUnits="userSpaceOnUse">
                         <circle cx="10" cy="10" r="4" fill="rgba(255,255,255,0.4)"/>
                     </pattern>
-                    <pattern id="pat-legend" width="30" height="30" patternUnits="userSpaceOnUse">
-                        <path d="M0 15 Q 7.5 0, 15 15 T 30 15" fill="none" stroke="rgba(255,215,0,0.8)" stroke-width="3"/>
-                        <path d="M0 30 Q 7.5 15, 15 30 T 30 30" fill="none" stroke="rgba(255,215,0,0.8)" stroke-width="3"/>
-                    </pattern>
                 </defs>
                 <path id="egg-pattern-dots" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z" fill="url(#pat-rare)" style="opacity:0; transition:opacity 0.3s;" pointer-events="none"/>
-                <path id="egg-pattern-scales" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z" fill="url(#pat-legend)" style="opacity:0; transition:opacity 0.3s;" pointer-events="none"/>
 
                 <g class="crack-group" id="stage1"><path class="crack-path" d="M 100 130 L 85 105 M 100 130 L 120 145 M 100 130 L 105 160" stroke-width="2" /></g>
                 <g class="crack-group" id="stage2"><path class="crack-path" d="M 85 105 L 60 90 M 85 105 L 75 70" stroke-width="2.5" /><path class="crack-path" d="M 120 145 L 150 135 M 120 145 L 140 175" stroke-width="2.5" /><path class="crack-path" d="M 105 160 L 90 190" stroke-width="2.5" /></g>
@@ -275,10 +293,10 @@
             introOverlay.style.display = 'none'; initAudio();
         });
 
-        // --- MEKANIK RESET & TIER BARU ---
+        // --- GANTI TIER & RESET OTOMATIS ---
         function setRarity(rarity) {
             forcedRarity = rarity;
-            resetGame(); // Otomatis reset memunculkan telur baru dengan tier yang ditekan
+            resetGame(); 
         }
 
         // --- KURSOR / PENGETUK LOGIC ---
@@ -287,11 +305,7 @@
         window.addEventListener('pointerdown', (e) => {
             if(cfgTapper === 'none') return;
             isPointerDown = true;
-            
-            // Set emoji
             tapFeedback.innerText = cfgTapper === 'random' ? randomTappers[Math.floor(Math.random() * randomTappers.length)] : cfgTapper;
-            
-            // Tampilkan di posisi
             tapFeedback.style.transition = 'opacity 0.1s ease-out';
             tapFeedback.style.opacity = 1;
             tapFeedback.style.left = e.clientX + 'px';
@@ -306,8 +320,7 @@
         });
 
         window.addEventListener('pointerup', () => {
-            isPointerDown = false;
-            tapFeedback.style.opacity = 0;
+            isPointerDown = false; tapFeedback.style.opacity = 0;
         });
 
         function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } if (audioCtx.state === 'suspended') { audioCtx.resume(); }}
@@ -384,7 +397,7 @@
         function breakEgg() {
             isBroken = true; 
             eggBase.style.opacity = '0'; crackStages.forEach(s => s.style.opacity = 0); eggShadow.style.opacity = '0';
-            document.getElementById('egg-pattern-dots').style.opacity = 0; document.getElementById('egg-pattern-scales').style.opacity = 0;
+            document.getElementById('egg-pattern-dots').style.opacity = 0; 
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
             
             if (forcedRarity === 'legendary') document.body.classList.add('legendary-mode'); 
@@ -416,6 +429,12 @@
             }
         }
 
+        // Fungsi Ambil Warna Acak untuk Pattern Legendary
+        function getRandColors(count) {
+            const legColors = ['#FFD700', '#FF4500', '#DC143C', '#8A2BE2', '#00FFFF', '#FF1493', '#32CD32', '#FF00FF', '#1E90FF'];
+            return legColors.sort(() => 0.5 - Math.random()).slice(0, count);
+        }
+
         function resetGame() {
             clicks = 0; isBroken = false; isProcessing = false; 
             applyLanguage(); 
@@ -425,23 +444,38 @@
             animalDiv.classList.remove('show'); 
             document.body.classList.remove('legendary-mode');
 
-            // --- Atur Corak Telur Visual ---
+            // --- Reset Semua Visual Corak Telur ---
+            eggBase.className = 'egg-base'; 
             const pDots = document.getElementById('egg-pattern-dots');
-            const pScales = document.getElementById('egg-pattern-scales');
-            pDots.style.opacity = 0; pScales.style.opacity = 0;
+            pDots.style.opacity = 0; 
 
             if (forcedRarity === 'rare') {
-                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #11998e, #38ef7d)'); // Hijau keren
-                pDots.style.opacity = 0.6; // Polkadot
-            } else if (forcedRarity === 'legendary') {
-                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(to top, #200122, #6f0000)'); // Merah/Emas gelap
-                pScales.style.opacity = 0.8; // Sisik Naga
-            } else {
-                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #ff00cc, #333399)'); // Ungu default
+                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #11998e, #38ef7d)'); 
+                pDots.style.opacity = 0.6; // Munculkan SVG Polkadot
+            } 
+            else if (forcedRarity === 'legendary') {
+                // Pilih Acak 1 dari 5 Corak CSS
+                const patNum = Math.floor(Math.random() * 5) + 1;
+                eggBase.classList.add(`pat-${patNum}`);
+                
+                // Set warna mencolok acak
+                const cols = getRandColors(4);
+                eggBase.style.setProperty('--c1', cols[0]);
+                eggBase.style.setProperty('--c2', cols[1]);
+                eggBase.style.setProperty('--c3', cols[2]);
+                eggBase.style.setProperty('--c4', cols[3]);
+                
+                // Set Size bawaan tiap pattern
+                const sizes = { 1: '150px', 2: '150px', 3: '140px', 4: '30px', 5: '100px' };
+                eggBase.style.setProperty('--s', sizes[patNum]);
+            } 
+            else {
+                // Common
+                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #ff00cc, #333399)');
             }
         }
         
-        // Render inisial corak
+        // Render inisial warna/corak
         resetGame();
 
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Gagal:', err)); }); }
