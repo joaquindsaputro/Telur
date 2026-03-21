@@ -32,7 +32,13 @@
         }
 
         body.legendary-mode { animation: none; background: radial-gradient(circle, #fff700, #ff8c00); }
-        @keyframes skyCycle { 0% { background: #87CEEB; } 40% { background: #ff7e5f; } 50% { background: #1a1a2e; } 90% { background: #3a4e5a; } 100% { background: #87CEEB; } }
+        @keyframes skyCycle { 
+            0% { background: #87CEEB; }   /* Matahari pas di atas (Siang Terik) */
+            25% { background: #ff7e5f; }  /* Matahari terbenam (Sore/Sunset) */
+            50% { background: #1a1a2e; }  /* Bulan pas di atas (Tengah Malam) */
+            75% { background: #3a4e5a; }  /* Matahari mulai terbit (Pajar/Sunrise) */
+            100% { background: #87CEEB; } /* Kembali Siang */
+        }
 
         /* --- PEMANDANGAN --- */
         .cloud { position: absolute; font-size: 60px; opacity: 0.7; animation: floatCloud linear infinite; z-index: 0; pointer-events: none; filter: drop-shadow(0 5px 5px rgba(255,255,255,0.3)); }
