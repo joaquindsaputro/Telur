@@ -336,6 +336,14 @@
             document.body.style.background = 'radial-gradient(circle, #ff9966, #ff5e62)';
             statusText.innerText = "Ketuk Telurnya!"; updateEggVisual(); energyContainer.innerHTML = '';
         }
+
+        if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker sukses terdaftar!', reg.scope))
+            .catch(err => console.log('Service Worker gagal terdaftar:', err));
+        });
+        }
     </script>
 </body>
 </html>
