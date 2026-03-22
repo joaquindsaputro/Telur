@@ -40,19 +40,17 @@
             background-repeat: no-repeat;
         }
         
-        /* Fallback warna sementara sebelum gambar AI di-load */
-        .layer-siang { background-color: #87CEEB; animation: fadeSiang 24s infinite linear; }
-        .layer-sore  { background-color: #ff7e5f; animation: fadeSore 24s infinite linear; }
-        .layer-malam { background-color: #1a1a2e; animation: fadeMalam 24s infinite linear; }
-        .layer-pagi  { background-color: #3a4e5a; animation: fadePagi 24s infinite linear; }
+        .layer-siang { background-color: #87CEEB; animation: fadeSiang 60s infinite linear; }
+        .layer-sore  { background-color: #ff7e5f; animation: fadeSore 60s infinite linear; }
+        .layer-malam { background-color: #1a1a2e; animation: fadeMalam 60s infinite linear; }
+        .layer-pagi  { background-color: #3a4e5a; animation: fadePagi 60s infinite linear; }
 
-        /* Sinkronisasi dengan Orbit Matahari (0% = Matahari di atas) */
+        /* Sinkronisasi dengan Orbit Matahari Baru */
         @keyframes fadeSiang { 0%, 15% { opacity: 1; } 25%, 85% { opacity: 0; } 95%, 100% { opacity: 1; } }
         @keyframes fadeSore  { 0%, 15% { opacity: 0; } 25%, 40% { opacity: 1; } 50%, 100% { opacity: 0; } }
         @keyframes fadeMalam { 0%, 40% { opacity: 0; } 50%, 65% { opacity: 1; } 75%, 100% { opacity: 0; } }
         @keyframes fadePagi  { 0%, 65% { opacity: 0; } 75%, 85% { opacity: 1; } 95%, 100% { opacity: 0; } }
 
-        /* Efek Legendary pada Background AI */
         body.legendary-mode #bg-container { filter: sepia(0.5) hue-rotate(-15deg) saturate(2) brightness(0.8); }
         body.legendary-mode::after {
             content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
@@ -75,13 +73,56 @@
         .banner-cloth { background: rgba(255,255,255,0.9); color: #d32f2f; font-size: 14px; padding: 4px 15px; border-radius: 2px; font-weight: bold; font-family: sans-serif; border-left: 4px solid #d32f2f; white-space: nowrap; }
         @keyframes flyPlane { 0% { transform: translateX(0) translateY(0); } 25% { transform: translateX(45vw) translateY(-15px); } 50% { transform: translateX(90vw) translateY(10px); } 75% { transform: translateX(135vw) translateY(-10px); } 100% { transform: translateX(180vw) translateY(0); } }
 
-        .celestial-orbit { position: absolute; bottom: -50vh; left: 50%; width: 0; height: 0; z-index: -2; }
-        .orbit-rotator { position: absolute; width: 200vmax; height: 200vmax; left: -100vmax; top: -100vmax; border-radius: 50%; animation: rotateOrbit 24s infinite linear; }
+        /* --- ORBIT BARU & LEBIH REAL (PERUBAHAN UTAMA) --- */
+        .celestial-orbit {
+            position: absolute;
+            bottom: -150vh; /* Pindahkan pusat orbit JAUH lebih ke bawah agar busur melintas di atas */
+            left: 50%;
+            width: 0;
+            height: 0;
+            z-index: -2;
+        }
+        .orbit-rotator {
+            position: absolute;
+            width: 400vh; /* Diameter orbit JAUH lebih besar (400% dari tinggi layar) */
+            height: 400vh;
+            left: -200vh;
+            top: -200vh;
+            border-radius: 50%;
+            animation: rotateOrbit 60s infinite linear; /* Rotasi lebih lambat (60 detik per siklus) */
+        }
         @keyframes rotateOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .celestial-body { position: absolute; font-size: 80px; width: 80px; height: 80px; text-align: center; line-height: 80px; left: 50%; margin-left: -40px; }
-        .sun-emoji { top: 0; filter: drop-shadow(0 0 40px #ffd700); animation: spinSun 10s infinite linear; }
+
+        .celestial-body {
+            position: absolute;
+            font-size: 80px;
+            width: 80px;
+            height: 80px;
+            text-align: center;
+            line-height: 80px;
+            left: 50%;
+            margin-left: -40px;
+            transition: opacity 0.3s; /* Transisi pemudaran halus */
+        }
+
+        /* Sinkronisasi pemunculan matahari & bulan dengan background AI dan rotasi baru */
+        .sun-emoji {
+            top: 0;
+            filter: drop-shadow(0 0 40px #ffd700);
+            animation: spinSun 10s infinite linear, showSun 60s infinite linear; /* Tambah animasi showSun */
+        }
         @keyframes spinSun { to { transform: rotate(360deg); } }
-        .moon-emoji { bottom: 0; transform: rotate(180deg); filter: drop-shadow(0 0 20px #ffffff); }
+        /* Matahari hanya muncul di siang (0-25%, 75-100% di Keyframes) */
+        @keyframes showSun { 0%, 20% { opacity: 1; } 30%, 70% { opacity: 0; } 80%, 100% { opacity: 1; } }
+
+        .moon-emoji {
+            bottom: 0;
+            transform: rotate(180deg);
+            filter: drop-shadow(0 0 20px #ffffff);
+            animation: showMoon 60s infinite linear; /* Tambah animasi showMoon */
+        }
+        /* Bulan hanya muncul di malam (30-70% di Keyframes) */
+        @keyframes showMoon { 0%, 25% { opacity: 0; } 35%, 65% { opacity: 1; } 75%, 100% { opacity: 0; } }
 
         /* --- WATERMARK PAPAN KAYU --- */
         .watermark-sign { position: absolute; bottom: 8vh; right: 5vw; z-index: 6; display: flex; flex-direction: column; align-items: center; transform: rotate(4deg); pointer-events: none; filter: drop-shadow(3px 5px 4px rgba(0,0,0,0.6)); }
@@ -100,7 +141,6 @@
         .egg-base { width: 100%; height: 100%; background: var(--egg-gradient); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: absolute; top:0; left:0; box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 20px 20px rgba(0,0,0,0.4); overflow: hidden; z-index: 5; }
         .egg-base::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' opacity='0.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E"); mix-blend-mode: overlay; }
         
-        /* Corak Legendary CSS Murni */
         .egg-base.pat-1 { --_g: var(--c1) 0% 5%,var(--c2) 6% 15%,var(--c1) 16% 25%,var(--c2) 26% 35%,var(--c1) 36% 45%,var(--c2) 46% 55%,var(--c1) 56% 65%,var(--c2) 66% 75%,var(--c1) 76% 85%,var(--c2) 86% 95%,#0000 96%; background: radial-gradient(50% 50% at 100% 0,var(--_g)), radial-gradient(50% 50% at 0 100%,var(--_g)), radial-gradient(50% 50%,var(--_g)), radial-gradient(50% 50%,var(--_g)) calc(var(--s)/2) calc(var(--s)/2) var(--c1); background-size: var(--s) var(--s); }
         .egg-base.pat-2 { --_g: var(--c1) 6.1%,var(--c2) 6.4% 18.6%,var(--c1) 18.9% 31.1%,var(--c2) 31.4% 43.6%,var(--c1) 43.9% 56.1%,var(--c2) 56.4% 68.6%,#0000 68.9%; background: radial-gradient(var(--s) at 100% 0,var(--_g)), radial-gradient(var(--s) at 0 0,var(--_g)), radial-gradient(var(--s) at 0 100%,var(--_g)), radial-gradient(var(--s) at 100% 100%,var(--_g)) var(--c1); background-size: var(--s) var(--s); }
         .egg-base.pat-3 { --_g: #0000 25%,#0008 47%,var(--c1) 53% 147%,var(--c2) 153% 247%,var(--c1) 253% 347%,var(--c2) 353% 447%,var(--c1) 453% 547%,#0008 553%,#0000 575%; --_s: calc(25%/3) calc(25%/4) at 50%; background: radial-gradient(var(--_s) 100%,var(--_g)), radial-gradient(var(--_s) 100%,var(--_g)) calc(var(--s)/2) calc(3*var(--s)/4), radial-gradient(var(--_s) 0,var(--_g)) calc(var(--s)/2) 0, radial-gradient(var(--_s) 0,var(--_g)) 0 calc(3*var(--s)/4), repeating-linear-gradient(90deg,var(--c3) calc(25%/-6) calc(25%/6),var(--c4) 0 calc(25%/2)); background-size: var(--s) calc(3*var(--s)/2); }
@@ -204,7 +244,12 @@
     <div class="airplane-banner"><div class="banner-cloth" id="banner-text-display">SUBSCRIBE @ChannelKu</div><div class="plane-emoji">🛩️</div></div>
 
     <div class="cloud c1">☁️</div><div class="cloud c2">☁️</div><div class="cloud c3">☁️</div>
-    <div class="celestial-orbit"><div class="orbit-rotator"><div class="celestial-body sun-emoji">☀️</div><div class="celestial-body moon-emoji">🌕</div></div></div>
+    <div class="celestial-orbit">
+        <div class="orbit-rotator">
+            <div class="celestial-body sun-emoji">☀️</div>
+            <div class="celestial-body moon-emoji">🌕</div>
+        </div>
+    </div>
     
     <div class="watermark-sign">
         <div class="watermark-board"><span class="wm-sub">SUBSCRIBE</span><div class="wm-name" id="wm-name-display">@ChannelKu</div></div>
