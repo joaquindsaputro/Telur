@@ -79,15 +79,11 @@
         @keyframes pulseSparkle { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(1.2); opacity: 1; } }
 
         /* KANVAS & TINTA ANIMASI SHIFTING COLOR */
+           /* KANVAS TANPA ANIMASI SHIFTING AGAR TIDAK LAG */
         #rune-canvas { 
             width: 100%; height: 100%; touch-action: none; cursor: crosshair; 
-            animation: runeGlowShift 2s infinite alternate; /* Animasi Glow */
         }
-        @keyframes runeGlowShift {
-            0% { filter: drop-shadow(0 0 6px #FFD700) drop-shadow(0 0 12px #FFD700); }
-            50% { filter: drop-shadow(0 0 10px #FF4500) drop-shadow(0 0 18px #FF4500); } /* Merah/Orange */
-            100% { filter: drop-shadow(0 0 6px #FFFFFF) drop-shadow(0 0 12px #FFFFFF); } /* Putih */
-        }
+
 
         /* EGG PULSING SAAT SIAP DI-TAP UNTUK SUBMIT */
         .egg-wrapper.pulsing-ready {
