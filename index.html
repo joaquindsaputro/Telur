@@ -45,7 +45,6 @@
         .layer-malam { background-color: #1a1a2e; animation: fadeMalam 60s infinite linear; }
         .layer-pagi  { background-color: #3a4e5a; animation: fadePagi 60s infinite linear; }
 
-        /* Sinkronisasi dengan Orbit Matahari Baru */
         @keyframes fadeSiang { 0%, 15% { opacity: 1; } 25%, 85% { opacity: 0; } 95%, 100% { opacity: 1; } }
         @keyframes fadeSore  { 0%, 15% { opacity: 0; } 25%, 40% { opacity: 1; } 50%, 100% { opacity: 0; } }
         @keyframes fadeMalam { 0%, 40% { opacity: 0; } 50%, 65% { opacity: 1; } 75%, 100% { opacity: 0; } }
@@ -73,70 +72,39 @@
         .banner-cloth { background: rgba(255,255,255,0.9); color: #d32f2f; font-size: 14px; padding: 4px 15px; border-radius: 2px; font-weight: bold; font-family: sans-serif; border-left: 4px solid #d32f2f; white-space: nowrap; }
         @keyframes flyPlane { 0% { transform: translateX(0) translateY(0); } 25% { transform: translateX(45vw) translateY(-15px); } 50% { transform: translateX(90vw) translateY(10px); } 75% { transform: translateX(135vw) translateY(-10px); } 100% { transform: translateX(180vw) translateY(0); } }
 
-        /* --- ORBIT BARU & LEBIH REAL (PERUBAHAN UTAMA) --- */
-        .celestial-orbit {
-            position: absolute;
-            bottom: -150vh; /* Pindahkan pusat orbit JAUH lebih ke bawah agar busur melintas di atas */
-            left: 50%;
-            width: 0;
-            height: 0;
-            z-index: -2;
-        }
-        .orbit-rotator {
-            position: absolute;
-            width: 400vh; /* Diameter orbit JAUH lebih besar (400% dari tinggi layar) */
-            height: 400vh;
-            left: -200vh;
-            top: -200vh;
-            border-radius: 50%;
-            animation: rotateOrbit 60s infinite linear; /* Rotasi lebih lambat (60 detik per siklus) */
-        }
+        /* --- ORBIT CELESTIAL --- */
+        .celestial-orbit { position: absolute; bottom: -150vh; left: 50%; width: 0; height: 0; z-index: -2; }
+        .orbit-rotator { position: absolute; width: 400vh; height: 400vh; left: -200vh; top: -200vh; border-radius: 50%; animation: rotateOrbit 60s infinite linear; }
         @keyframes rotateOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .celestial-body {
-            position: absolute;
-            font-size: 80px;
-            width: 80px;
-            height: 80px;
-            text-align: center;
-            line-height: 80px;
-            left: 50%;
-            margin-left: -40px;
-            transition: opacity 0.3s; /* Transisi pemudaran halus */
-        }
-
-        /* Sinkronisasi pemunculan matahari & bulan dengan background AI dan rotasi baru */
-        .sun-emoji {
-            top: 0;
-            filter: drop-shadow(0 0 40px #ffd700);
-            animation: spinSun 10s infinite linear, showSun 60s infinite linear; /* Tambah animasi showSun */
-        }
+        .celestial-body { position: absolute; font-size: 80px; width: 80px; height: 80px; text-align: center; line-height: 80px; left: 50%; margin-left: -40px; transition: opacity 0.3s; }
+        .sun-emoji { top: 0; filter: drop-shadow(0 0 40px #ffd700); animation: spinSun 10s infinite linear, showSun 60s infinite linear; }
         @keyframes spinSun { to { transform: rotate(360deg); } }
-        /* Matahari hanya muncul di siang (0-25%, 75-100% di Keyframes) */
         @keyframes showSun { 0%, 20% { opacity: 1; } 30%, 70% { opacity: 0; } 80%, 100% { opacity: 1; } }
-
-        .moon-emoji {
-            bottom: 0;
-            transform: rotate(180deg);
-            filter: drop-shadow(0 0 20px #ffffff);
-            animation: showMoon 60s infinite linear; /* Tambah animasi showMoon */
-        }
-        /* Bulan hanya muncul di malam (30-70% di Keyframes) */
+        .moon-emoji { bottom: 0; transform: rotate(180deg); filter: drop-shadow(0 0 20px #ffffff); animation: showMoon 60s infinite linear; }
         @keyframes showMoon { 0%, 25% { opacity: 0; } 35%, 65% { opacity: 1; } 75%, 100% { opacity: 0; } }
 
-        /* --- WATERMARK PAPAN KAYU --- */
+        /* --- WATERMARK --- */
         .watermark-sign { position: absolute; bottom: 8vh; right: 5vw; z-index: 6; display: flex; flex-direction: column; align-items: center; transform: rotate(4deg); pointer-events: none; filter: drop-shadow(3px 5px 4px rgba(0,0,0,0.6)); }
         .watermark-board { background: linear-gradient(to bottom, #A0522D, #8B4513); border: 3px solid #5C3A21; border-radius: 6px; padding: 5px 12px; text-align: center; }
         .wm-sub { color: #fff; font-size: 14px; display: block; text-shadow: 1px 1px 0 #000; letter-spacing: 1px; }
         .wm-name { color: #FFD700; font-size: 18px; text-shadow: 2px 2px 0 #000; margin-top: 2px; }
         .watermark-post { width: 12px; height: 40px; background: linear-gradient(to right, #5C3A21, #3e2615); border-radius: 0 0 5px 5px; margin-top: -2px;}
 
-        /* --- GAME AREA --- */
-        .game-area-centered { position: absolute; bottom: 20vh; left: 50%; transform: translateX(-50%); width: 200px; height: 260px; z-index: 10; display: flex; justify-content: center; }
+        /* --- GAME AREA (DRAGGABLE) --- */
+        .game-area-centered { 
+            position: absolute; 
+            top: 60%; /* Relatif ke tengah saat inisialisasi */
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 200px; height: 260px; 
+            z-index: 10; display: flex; justify-content: center; 
+            touch-action: none; /* Cegah scrolling saat di-drag */
+            cursor: pointer;
+        }
         
         .instruction { position: absolute; top: -140px; left: 50%; transform: translateX(-50%); color: #FFDE00; -webkit-text-stroke: 2px #000; text-shadow: 6px 6px 0px #000; font-size: 50px; font-weight: 900; white-space: pre-wrap; text-align: center; line-height: 1.1; width: 90vw; pointer-events: none; transition: all 0.2s; z-index: 15; letter-spacing: 3px; }
         .egg-shadow { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); width: 140px; height: 30px; background: rgba(0,0,0,0.6); border-radius: 50%; z-index: 4; filter: blur(5px); }
-        .egg-container { width: 100%; height: 100%; position: relative; cursor: pointer; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5)); z-index: 5; }
+        .egg-container { width: 100%; height: 100%; position: relative; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5)); z-index: 5; }
         
         .egg-base { width: 100%; height: 100%; background: var(--egg-gradient); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: absolute; top:0; left:0; box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 20px 20px rgba(0,0,0,0.4); overflow: hidden; z-index: 5; }
         .egg-base::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' opacity='0.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E"); mix-blend-mode: overlay; }
@@ -156,7 +124,8 @@
         .shake-shadow { animation: shakeHardShadow 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shakeHardShadow { 30%, 50%, 70% { transform: translateX(-50%) scale(0.9); } 40%, 60% { transform: translateX(-50%) scale(1.1); } }
         
-        .animal-reveal { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%) scale(0); font-size: 100px; z-index: 12; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; width: 300px; text-align: center; }
+        /* Animal Reveal dipindah mengikuti gameArea */
+        .animal-reveal { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%) scale(0); font-size: 100px; z-index: 12; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; width: 300px; text-align: center; }
         .animal-reveal.show { transform: translateX(-50%) scale(1) translateY(-60px); animation: bounceAnimal 1s infinite alternate; z-index: 25; }
         @keyframes bounceAnimal { to { transform: translateX(-50%) scale(1.05) translateY(-80px); } }
         .shard { position: absolute; background: var(--egg-gradient); clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); pointer-events: none; z-index: 20; }
@@ -170,12 +139,12 @@
         .setting-row select, .setting-row input { width: 100%; padding: 8px; border-radius: 8px; font-size: 16px; border: 1px solid #ccc; }
         #close-settings { width: 100%; padding: 10px; background: #ff5e62; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor:pointer;}
 
-        #cheat-zones { position: absolute; bottom: 0; left: 0; width: 100%; height: 15dvh; display: flex; z-index: 1000; opacity: 0; }
-        .cheat-btn { flex: 1; height: 100%; }
+        #cheat-zones { position: absolute; bottom: 0; left: 0; width: 100%; height: 15dvh; display: flex; z-index: 1000; opacity: 0; pointer-events: none; }
+        .cheat-btn { flex: 1; height: 100%; pointer-events: auto; }
 
         #tap-feedback { position: fixed; font-size: 70px; pointer-events: none; z-index: 5000; opacity: 0; transform-origin: bottom right; transform: translate(-30%, -80%) rotate(0deg); filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: opacity 0.1s ease-out; }
         
-        .energy-orb { position: absolute; width: 15px; height: 15px; background: white; border-radius: 50%; opacity: 0; z-index: 15; box-shadow: 0 0 10px white; }
+        .energy-orb { position: absolute; width: 15px; height: 15px; background: white; border-radius: 50%; opacity: 0; z-index: 15; box-shadow: 0 0 10px white; pointer-events: none; }
         @keyframes suckEnergy { 0% { transform: translate(var(--startX), var(--startY)) scale(1); opacity: 0.8; } 100% { transform: translate(0, 0) scale(0); opacity: 0; } }
     </style>
 </head>
@@ -259,21 +228,30 @@
     <div class="game-area-centered" id="gameArea">
         <div class="instruction" id="statusText"></div>
         <div class="egg-shadow" id="eggShadow"></div>
-        <div class="egg-container" id="eggContainer" onclick="tapEgg(event)">
+        <div class="egg-container" id="eggContainer">
              <div class="egg-base" id="eggBase"></div>
              
              <svg class="crack-overlay-svg" viewBox="0 0 200 260">
                 <defs><pattern id="pat-rare" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="4" fill="rgba(255,255,255,0.4)"/></pattern></defs>
                 <path id="egg-pattern-dots" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z" fill="url(#pat-rare)" style="opacity:0; transition:opacity 0.3s;" pointer-events="none"/>
-                <g class="crack-group" id="stage1"><path class="crack-path" d="M 100 130 L 85 105 M 100 130 L 120 145 M 100 130 L 105 160" stroke-width="2" /></g>
-                <g class="crack-group" id="stage2"><path class="crack-path" d="M 85 105 L 60 90 M 85 105 L 75 70" stroke-width="2.5" /><path class="crack-path" d="M 120 145 L 150 135 M 120 145 L 140 175" stroke-width="2.5" /><path class="crack-path" d="M 105 160 L 90 190" stroke-width="2.5" /></g>
-                <g class="crack-group" id="stage3"><path class="crack-path" d="M 60 90 L 30 100 M 75 70 L 80 40" stroke-width="3" /><path class="crack-path" d="M 150 135 L 180 120 M 140 175 L 160 210" stroke-width="3" /><path class="crack-path" d="M 90 190 L 100 230 M 90 190 L 60 210" stroke-width="3" /></g>
-                <g class="crack-group" id="stage4"><path class="crack-path" d="M 30 100 L 10 80 M 80 40 L 100 10 M 180 120 L 195 140 M 160 210 L 130 240 M 100 230 L 110 250" stroke-width="4" opacity="0.8" /><path class="crack-path" d="M 100 130 L 130 100 M 130 100 L 160 80" stroke-width="2" opacity="0.6"/></g>
+                
+                <g class="crack-group" id="stage1">
+                    <path class="crack-path" d="M 100 130 L 85 105 L 70 100 M 85 105 L 90 90 M 100 130 L 125 145 L 140 130 M 125 145 L 130 160 M 100 130 L 105 160 L 95 180" stroke-width="2" />
+                </g>
+                <g class="crack-group" id="stage2">
+                    <path class="crack-path" d="M 70 100 L 50 85 L 40 95 M 50 85 L 55 60 M 90 90 L 80 65 L 95 50 M 140 130 L 160 115 M 130 160 L 145 185 M 95 180 L 80 210 L 60 215" stroke-width="2.5" />
+                </g>
+                <g class="crack-group" id="stage3">
+                    <path class="crack-path" d="M 40 95 L 20 105 M 55 60 L 45 35 M 95 50 L 105 20 M 160 115 L 185 100 L 195 110 M 160 115 L 170 85 M 145 185 L 165 215 L 150 240 M 80 210 L 85 245 M 60 215 L 35 230" stroke-width="3" />
+                </g>
+                <g class="crack-group" id="stage4">
+                    <path class="crack-path" d="M 20 105 L 10 130 L 25 150 M 45 35 L 60 15 M 105 20 L 135 25 M 195 110 L 190 140 M 170 85 L 155 60 M 165 215 L 185 190 M 85 245 L 115 255 M 35 230 L 15 200 M 100 130 L 130 100 L 160 80 M 100 130 L 75 150 L 50 140 M 100 130 L 115 110 L 105 85" stroke-width="4" opacity="0.8" />
+                    <path class="crack-path" d="M 100 130 L 130 100 M 130 100 L 160 80" stroke-width="2" opacity="0.6"/>
+                </g>
             </svg>
         </div>
+        <div class="animal-reveal" id="animalContent"></div>
     </div>
-    
-    <div class="animal-reveal" id="animalContent"></div>
 
     <div id="cheat-zones">
         <div class="cheat-btn" onclick="setRarity('common')"></div>
@@ -298,8 +276,8 @@
         const randomTappers = ['🔨', '🍡', '🥄', '🍭', '🍢', '🪄', '🪓', '⛏️', '🗡️', '🧹'];
 
         const dict = {
-            id: { start: "Ketuk\nTelurnya!", keep: "Terus\nKetuk!", harder: "Lebih\nKuat!", almost: "Sedikit\nLagi!", speciesCommon: "Wah,\nIsinya...", speciesRare: "Spesies\nLangka!", speciesLegend: "LEGENDARY!" },
-            en: { start: "Tap the\nEgg!", keep: "Keep\nTapping!", harder: "Hit\nHarder!", almost: "Almost\nThere!", speciesCommon: "Wow,\nIt's...", speciesRare: "Rare\nSpecies!", speciesLegend: "LEGENDARY!" }
+            id: { start: "Ketuk/Geser\nTelurnya!", keep: "Terus\nKetuk!", harder: "Lebih\nKuat!", almost: "Sedikit\nLagi!", speciesCommon: "Wah,\nIsinya...", speciesRare: "Spesies\nLangka!", speciesLegend: "LEGENDARY!" },
+            en: { start: "Tap/Drag\nthe Egg!", keep: "Keep\nTapping!", harder: "Hit\nHarder!", almost: "Almost\nThere!", speciesCommon: "Wow,\nIt's...", speciesRare: "Rare\nSpecies!", speciesLegend: "LEGENDARY!" }
         };
 
         let dbAnimals = {
@@ -314,24 +292,19 @@
             });
         }).catch(err => console.log("CSV gagal, pakai default."));
 
-        // --- LOCAL STORAGE & SETTINGS ---
         let cfgLang = localStorage.getItem('cfgLang') || 'id';
         let cfgFont = localStorage.getItem('cfgFont') || "'Bangers', cursive";
         let cfgTapper = localStorage.getItem('cfgTapper') || 'none';
         let cfgChannel = localStorage.getItem('cfgChannel') || '@ChannelKu';
         let cfgTheme = localStorage.getItem('cfgTheme') || 'lego';
 
-        document.getElementById('sel-lang').value = cfgLang;
-        document.getElementById('sel-font').value = cfgFont;
-        document.getElementById('sel-tapper').value = cfgTapper;
-        document.getElementById('inp-channel').value = cfgChannel;
+        document.getElementById('sel-lang').value = cfgLang; document.getElementById('sel-font').value = cfgFont;
+        document.getElementById('sel-tapper').value = cfgTapper; document.getElementById('inp-channel').value = cfgChannel;
         document.getElementById('sel-theme').value = cfgTheme;
 
         function applyLanguage() { statusText.innerText = dict[cfgLang].start; }
         function applyWatermark() { document.getElementById('wm-name-display').innerText = cfgChannel; document.getElementById('banner-text-display').innerText = 'SUBSCRIBE ' + cfgChannel; }
-        
         function applyThemeAI() {
-            // Memasang gambar AI ke tiap layer berdasarkan tema folder
             document.querySelector('.layer-pagi').style.backgroundImage = `url('themes/${cfgTheme}/pagi.jpg')`;
             document.querySelector('.layer-siang').style.backgroundImage = `url('themes/${cfgTheme}/siang.jpg')`;
             document.querySelector('.layer-sore').style.backgroundImage  = `url('themes/${cfgTheme}/sore.jpg')`;
@@ -345,36 +318,125 @@
         function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
         
         function updateSettings() {
-            cfgLang = document.getElementById('sel-lang').value;
-            cfgFont = document.getElementById('sel-font').value;
-            cfgTapper = document.getElementById('sel-tapper').value;
-            cfgChannel = document.getElementById('inp-channel').value;
+            cfgLang = document.getElementById('sel-lang').value; cfgFont = document.getElementById('sel-font').value;
+            cfgTapper = document.getElementById('sel-tapper').value; cfgChannel = document.getElementById('inp-channel').value;
             cfgTheme = document.getElementById('sel-theme').value;
             
             localStorage.setItem('cfgLang', cfgLang); localStorage.setItem('cfgFont', cfgFont); 
-            localStorage.setItem('cfgTapper', cfgTapper); localStorage.setItem('cfgChannel', cfgChannel);
-            localStorage.setItem('cfgTheme', cfgTheme);
+            localStorage.setItem('cfgTapper', cfgTapper); localStorage.setItem('cfgChannel', cfgChannel); localStorage.setItem('cfgTheme', cfgTheme);
             
             document.documentElement.style.setProperty('--font-current', cfgFont);
-            applyWatermark(); applyThemeAI();
-            if(!isBroken && clicks === 0) applyLanguage(); 
+            applyWatermark(); applyThemeAI(); if(!isBroken && clicks === 0) applyLanguage(); 
         }
 
         introOverlay.addEventListener('click', () => { if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); } introOverlay.style.display = 'none'; initAudio(); });
         function setRarity(rarity) { forcedRarity = rarity; resetGame(); }
 
+        // --- SISTEM DRAG & DROP & EVENT GABUNGAN ---
         let isPointerDown = false;
-        window.addEventListener('pointerdown', (e) => {
-            if(cfgTapper === 'none') return;
-            isPointerDown = true;
-            tapFeedback.innerText = cfgTapper === 'random' ? randomTappers[Math.floor(Math.random() * randomTappers.length)] : cfgTapper;
-            tapFeedback.style.transition = 'opacity 0.1s ease-out'; tapFeedback.style.opacity = 1;
-            tapFeedback.style.left = e.clientX + 'px'; tapFeedback.style.top = e.clientY + 'px'; tapFeedback.style.transform = 'translate(-30%, -80%) rotate(0deg)';
-        });
-        window.addEventListener('pointermove', (e) => { if (!isPointerDown || cfgTapper === 'none') return; tapFeedback.style.left = e.clientX + 'px'; tapFeedback.style.top = e.clientY + 'px'; });
-        window.addEventListener('pointerup', () => { isPointerDown = false; tapFeedback.style.opacity = 0; });
+        let isDraggingEgg = false;
+        let startDragX, startDragY;
+        let eggOffsetX, eggOffsetY;
+        let lastWallHit = 0;
 
+        window.addEventListener('pointerdown', (e) => {
+            isPointerDown = true;
+            
+            // Logika Tapper (Cursor Khusus)
+            if(cfgTapper !== 'none') {
+                tapFeedback.innerText = cfgTapper === 'random' ? randomTappers[Math.floor(Math.random() * randomTappers.length)] : cfgTapper;
+                tapFeedback.style.transition = 'opacity 0.1s ease-out'; tapFeedback.style.opacity = 1;
+                tapFeedback.style.left = e.clientX + 'px'; tapFeedback.style.top = e.clientY + 'px'; 
+                tapFeedback.style.transform = 'translate(-30%, -80%) rotate(0deg)';
+            }
+
+            // Logika Pegang Telur (Drag)
+            if (!isBroken && !isProcessing && e.target.closest('#eggContainer')) {
+                isDraggingEgg = true;
+                startDragX = e.clientX;
+                startDragY = e.clientY;
+                
+                const rect = gameArea.getBoundingClientRect();
+                const eggCenterX = rect.left + rect.width / 2;
+                const eggCenterY = rect.top + rect.height / 2;
+                
+                // Simpan offset mouse terhadap titik tengah gameArea
+                eggOffsetX = e.clientX - eggCenterX;
+                eggOffsetY = e.clientY - eggCenterY;
+                gameArea.style.cursor = 'grabbing';
+            }
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!isPointerDown) return;
+
+            // Update posisi tapper tool
+            if (cfgTapper !== 'none') {
+                tapFeedback.style.left = e.clientX + 'px'; tapFeedback.style.top = e.clientY + 'px';
+            }
+
+            // Update posisi telur & Cek tabrakan dinding
+            if (isDraggingEgg) {
+                let targetX = e.clientX - eggOffsetX;
+                let targetY = e.clientY - eggOffsetY;
+
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                const halfW = gameArea.offsetWidth / 2; // Offset lebar kontainer
+                const halfH = gameArea.offsetHeight / 2; // Offset tinggi kontainer
+
+                let hitWall = false;
+
+                // Batas Dinding Layar
+                if(targetX < halfW) { targetX = halfW; hitWall = true; }
+                if(targetX > w - halfW) { targetX = w - halfW; hitWall = true; }
+                if(targetY < halfH) { targetY = halfH; hitWall = true; }
+                if(targetY > h - halfH) { targetY = h - halfH; hitWall = true; }
+
+                gameArea.style.left = targetX + 'px';
+                gameArea.style.top = targetY + 'px';
+
+                if (hitWall) handleWallHit();
+            }
+        });
+
+        window.addEventListener('pointerup', (e) => {
+            isPointerDown = false;
+            tapFeedback.style.opacity = 0;
+
+            if (isDraggingEgg) {
+                isDraggingEgg = false;
+                gameArea.style.cursor = 'pointer';
+                
+                // Jika digeser sangat sedikit, anggap sebagai ketukan biasa
+                let dist = Math.hypot(e.clientX - startDragX, e.clientY - startDragY);
+                if (dist < 10) {
+                    tapEgg();
+                }
+            }
+        });
+
+        function handleWallHit() {
+            const now = Date.now();
+            if (now - lastWallHit > 300) { // Cooldown 300ms agar tidak beruntun saat ditekan ke dinding
+                lastWallHit = now;
+                playThudSound();
+                tapEgg(); // Retakkan telur layaknya diketuk
+            }
+        }
+
+        // --- SISTEM AUDIO ---
         function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } if (audioCtx.state === 'suspended') { audioCtx.resume(); }}
+        
+        // SFX Thud saat nabrak dinding
+        function playThudSound() {
+            initAudio(); const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(100, t); osc.frequency.exponentialRampToValueAtTime(20, t + 0.15);
+            gain.gain.setValueAtTime(0.8, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(t); osc.stop(t + 0.15);
+        }
+
         function playCrackSound(intensity) {
             initAudio(); const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.type = 'sawtooth'; osc.frequency.setValueAtTime(50 + Math.random()*50, t); osc.frequency.exponentialRampToValueAtTime(10, t + 0.1); gain.gain.setValueAtTime(0.5 + (intensity * 0.1), t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15); const bufferSize = audioCtx.sampleRate * 0.1; const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate); const data = buffer.getChannelData(0); for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1; const noise = audioCtx.createBufferSource(); noise.buffer = buffer; const noiseGain = audioCtx.createGain(); noiseGain.gain.setValueAtTime(0.8, t); noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.1); osc.connect(gain); gain.connect(audioCtx.destination); noise.connect(noiseGain); noiseGain.connect(audioCtx.destination); osc.start(t); osc.stop(t + 0.15); noise.start(t);
@@ -392,14 +454,33 @@
             }
         }
 
-        function tapEgg(event) {
+        // --- GAME LOGIC ---
+        function tapEgg() {
             if (isBroken || isProcessing) return; let maxClicks = forcedRarity === 'legendary' ? 10 : (forcedRarity === 'rare' ? 7 : 4);
             initAudio(); clicks++; playCrackSound(clicks/maxClicks);
-            if(cfgTapper !== 'none') { tapFeedback.style.transition = 'transform 0.05s ease-out'; tapFeedback.style.transform = 'translate(-30%, -80%) rotate(-50deg)'; setTimeout(() => { if(isPointerDown) { tapFeedback.style.transition = 'transform 0.1s ease-in'; tapFeedback.style.transform = 'translate(-30%, -80%) rotate(0deg)'; } }, 100); }
+            
+            if(cfgTapper !== 'none') { 
+                tapFeedback.style.transition = 'transform 0.05s ease-out'; 
+                tapFeedback.style.transform = 'translate(-30%, -80%) rotate(-50deg)'; 
+                setTimeout(() => { if(isPointerDown) { tapFeedback.style.transition = 'transform 0.1s ease-in'; tapFeedback.style.transform = 'translate(-30%, -80%) rotate(0deg)'; } }, 100); 
+            }
             if (navigator.vibrate) navigator.vibrate(50);
-            eggContainer.classList.remove('shake-hard'); void eggContainer.offsetWidth; eggContainer.classList.add('shake-hard'); eggShadow.classList.remove('shake-shadow'); void eggShadow.offsetWidth; eggShadow.classList.add('shake-shadow');
+            eggContainer.classList.remove('shake-hard'); void eggContainer.offsetWidth; eggContainer.classList.add('shake-hard'); 
+            eggShadow.classList.remove('shake-shadow'); void eggShadow.offsetWidth; eggShadow.classList.add('shake-shadow');
+            
             if (forcedRarity !== 'common' && clicks === Math.floor(maxClicks/2)) createEnergyOrbs();
-            if(clicks < maxClicks) { const progress = clicks / maxClicks; if(progress > 0.8) statusText.innerText = dict[cfgLang].almost; else if(progress > 0.5) statusText.innerText = dict[cfgLang].harder; else statusText.innerText = dict[cfgLang].keep; const stageIndex = Math.floor((clicks / maxClicks) * crackStages.length); if(stageIndex > 0 && stageIndex <= crackStages.length) crackStages[stageIndex - 1].style.opacity = 1; } else { isProcessing = true; setTimeout(breakEgg, 250); }
+            
+            if(clicks < maxClicks) { 
+                const progress = clicks / maxClicks; 
+                if(progress > 0.8) statusText.innerText = dict[cfgLang].almost; 
+                else if(progress > 0.5) statusText.innerText = dict[cfgLang].harder; 
+                else statusText.innerText = dict[cfgLang].keep; 
+                
+                const stageIndex = Math.floor((clicks / maxClicks) * crackStages.length); 
+                if(stageIndex > 0 && stageIndex <= crackStages.length) crackStages[stageIndex - 1].style.opacity = 1; 
+            } else { 
+                isProcessing = true; setTimeout(breakEgg, 250); 
+            }
         }
 
         function breakEgg() {
@@ -423,6 +504,11 @@
 
         function resetGame() {
             clicks = 0; isBroken = false; isProcessing = false; applyLanguage(); 
+            
+            // Kembalikan Posisi Telur ke Tengah
+            gameArea.style.left = '50%';
+            gameArea.style.top = '60%';
+            
             eggBase.style.opacity = '1'; eggShadow.style.opacity = '1'; crackStages.forEach(s => s.style.opacity = 0); animalDiv.classList.remove('show'); document.body.classList.remove('legendary-mode');
             eggBase.className = 'egg-base'; const pDots = document.getElementById('egg-pattern-dots'); pDots.style.opacity = 0; 
             if (forcedRarity === 'rare') { document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #11998e, #38ef7d)'); pDots.style.opacity = 0.6; } 
