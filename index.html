@@ -53,8 +53,8 @@
         @keyframes floatCloud { to { transform: translateX(120vw); } }
 
         /* --- TULISAN INSTRUKSIONAL --- */
-        .instruction { position: absolute; top: 5vh; left: 50%; transform: translateX(-50%); color: #FFDE00; -webkit-text-stroke: 2px #000; text-shadow: 4px 4px 0px #000; font-size: 40px; font-weight: 900; white-space: pre-wrap; text-align: center; line-height: 1.1; width: 95vw; pointer-events: none; transition: all 0.2s; z-index: 15; letter-spacing: 2px; }
-        .sub-instruction { font-size: 16px; line-height: 1.3; color: #fff; -webkit-text-stroke: 1px #000; display: block; margin-top: 10px; }
+        .instruction { position: absolute; top: 5vh; left: 50%; transform: translateX(-50%); color: #FFDE00; -webkit-text-stroke: 1px #000; text-shadow: 4px 4px 0px #000; font-size: 40px; font-weight: 900; white-space: pre-wrap; text-align: center; line-height: 1.1; width: 95vw; pointer-events: none; transition: all 0.2s; z-index: 15; letter-spacing: 2px; }
+        .sub-instruction { font-size: 16px; line-height: 1.3; color: #fff; display: block; margin-top: 10px; }
 
         /* --- AREA MENGGAMBAR --- */
         #drawing-area { position: absolute; top: 25vh; left: 50%; transform: translateX(-50%); width: 95vw; max-width: 400px; height: 120px; z-index: 30; display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 0; transition: all 0.5s ease-in-out; }
@@ -79,12 +79,51 @@
         .egg-base.pat-5 { --_g: #0000 24%,var(--c2) 26% 34%,var(--c1) 36% 44%,var(--c2) 46% 54%,var(--c1) 56% 64%,var(--c2) 66% 74%,#0000 76%; background: radial-gradient(100% 100% at 100% 0,var(--_g)), radial-gradient(100% 100% at 0 100%,var(--_g)), radial-gradient(var(--c2) 14%,var(--c1) 16%) calc(var(--s)/2) calc(var(--s)/2); background-size: var(--s) var(--s); }
 
         /* MAGIC RINGS */
-        .magic-ring { position: absolute; top: 10%; left: -12.5%; width: 125%; height: 80%; border: 6px solid rgba(0, 255, 255, 0.6); border-radius: 50%; box-shadow: 0 0 15px cyan, inset 0 0 15px cyan; animation: spinRing 4s linear infinite; z-index: 20; pointer-events: none; transition: all 0.5s; opacity: 1; }
-        .ring-1 { transform: rotateX(60deg) rotateY(20deg); }
-        .ring-2 { border-color: rgba(255, 0, 255, 0.6); box-shadow: 0 0 15px magenta, inset 0 0 15px magenta; animation: spinRingRev 5s linear infinite; transform: rotateX(70deg) rotateY(-30deg); }
-        @keyframes spinRing { 100% { transform: rotateX(60deg) rotateY(20deg) rotateZ(360deg); } }
-        @keyframes spinRingRev { 100% { transform: rotateX(70deg) rotateY(-30deg) rotateZ(-360deg); } }
+        /* MAGIC RINGS (VERSI PITA HOLOGRAFIK BERUKIR) */
+        .magic-ring { 
+            position: absolute; 
+            top: 15%; 
+            left: -15%; 
+            width: 130%; 
+            height: 70%; 
+            border-radius: 50%; 
+            /* Pita transparan yang lebar */
+            border: 24px solid rgba(0, 255, 255, 0.15); 
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.5); 
+            animation: spinRing 6s linear infinite; 
+            z-index: 20; 
+            pointer-events: none; 
+            transition: all 0.5s; 
+        }
+
+        /* Simulasi Ukiran Rune (Garis Putus-putus Bercahaya) di tengah pita */
+        .magic-ring::before {
+            content: '';
+            position: absolute;
+            top: -14px; left: -14px; right: -14px; bottom: -14px;
+            border-radius: 50%;
+            border: 4px dashed #00ffff;
+            filter: drop-shadow(0 0 8px #00ffff);
+        }
+
+        /* Garis Tegas di Batas Luar Pita */
+        .magic-ring::after {
+            content: '';
+            position: absolute;
+            top: -24px; left: -24px; right: -24px; bottom: -24px;
+            border-radius: 50%;
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 10px #00ffff, inset 0 0 10px #00ffff;
+        }
+
+        /* Keduanya menggunakan warna dasar Cyan dengan rotasi berlawanan */
+        .ring-1 { transform: rotateX(65deg) rotateY(15deg); }
+        .ring-2 { transform: rotateX(70deg) rotateY(-20deg); animation: spinRingRev 8s linear infinite; }
+
+        @keyframes spinRing { 100% { transform: rotateX(65deg) rotateY(15deg) rotateZ(360deg); } }
+        @keyframes spinRingRev { 100% { transform: rotateX(70deg) rotateY(-20deg) rotateZ(-360deg); } }
         .unlocked .magic-ring { opacity: 0; transform: scale(1.5); }
+
 
         /* SCANNER & INFUSED RUNE INSIDE EGG */
         #scanner-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #00ffcc; box-shadow: 0 0 15px 5px #00ffcc; z-index: 25; opacity: 0; pointer-events: none; }
