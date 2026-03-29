@@ -151,7 +151,7 @@
         }
         /* --- GAME AREA (TELUR & PIXIE DUST) --- */
         .game-area-centered { position: absolute; top: 65%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 260px; z-index: 10; display: flex; justify-content: center; touch-action: none; cursor: pointer; transition: transform 0.1s; }
-        .egg-container { width: 100%; height: 100%; position: relative; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5)); z-index: 5; }
+        .egg-container { width: 100%; height: 100%; position: relative; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5)); z-index: 5; will-change: transform, filter;}
         
         /* EGG WRAPPER BARU (PEMOTONG BENTUK TELUR) */
         .egg-wrapper { 
@@ -211,7 +211,7 @@
             transition: all 0.5s; 
             opacity: 1; 
             overflow: visible; 
-            /* Menetralkan sisa style pita lama */
+            will-change: transform;
             border: none;
             box-shadow: none;
             background: transparent;
@@ -222,7 +222,8 @@
         
         /* Drop-shadow bercahaya pada semua elemen di dalam kontainer cincin */
         .magic-ring path { filter: drop-shadow(0 0 2px #00ffff); }
-        .magic-ring text { filter: drop-shadow(0 0 5px #00ffff); } /* Teks bercahaya lebih kuat */
+        .magic-ring text { text-shadow: 0 0 8px #00ffff; }
+
         
         @keyframes spinRing1 { 
             0% { transform: rotateX(65deg) rotateY(15deg) rotateZ(0deg); }
@@ -667,7 +668,7 @@
         // --- DRAG, SMASH & TAP TO CAST LOGIC ---
         let isPointerDown = false; let isDraggingEgg = false; let eggOffsetX, eggOffsetY; let lastWallHit = 0;
 
-        window.addEventListener('pointerdown', (e) => {
+                window.addEventListener('pointerdown', (e) => {
             // TAP TO CAST (Sentuh Telur Untuk Submit)
             if (gameState === 'locked' && e.target.closest('#eggContainer')) {
                 const blank = document.createElement('canvas'); blank.width = canvas.width; blank.height = canvas.height;
@@ -680,16 +681,24 @@
             
             if(cfgTapper !== 'none') {
                 tapFeedback.innerText = cfgTapper === 'random' ? tapperList[Math.floor(Math.random() * tapperList.length)] : cfgTapper;
-                tapFeedback.style.opacity = 1; tapFeedback.style.left = e.clientX+'px'; tapFeedback.style.top = e.clientY+'px';
+                tapFeedback.style.opacity = 1; 
+                tapFeedback.style.left = e.clientX+'px'; 
+                tapFeedback.style.top = e.clientY+'px';
             }
 
             if (e.target.closest('#eggContainer')) {
                 isDraggingEgg = true; 
+                
+                // Kembalikan transisi ke mode cepat agar seretan jari tidak lag/delay
+                gameArea.style.transition = 'transform 0.1s'; 
+                
                 const gRect = gameArea.getBoundingClientRect();
-                eggOffsetX = e.clientX - gRect.left; eggOffsetY = e.clientY - gRect.top;
+                eggOffsetX = e.clientX - gRect.left; 
+                eggOffsetY = e.clientY - gRect.top;
                 gameArea.style.cursor = 'grabbing';
             }
         });
+
 
         window.addEventListener('pointermove', (e) => {
             if (!isPointerDown || gameState !== 'ready') return;
@@ -741,14 +750,25 @@
             if (clicks >= maxClicks) { gameState = 'broken'; setTimeout(breakEgg, 250); }
         }
 
-        function breakEgg() {
+                function breakEgg() {
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            if(eggBase) eggBase.style.opacity = '0'; infusedRune.style.opacity='0';
+            if(eggBase) eggBase.style.opacity = '0'; 
+            infusedRune.style.opacity='0';
             
+            // 1. Sembunyikan paksa icon pengetuk
+            if(tapFeedback) tapFeedback.style.opacity = '0';
+            
+            // 2. Tarik telur kembali ke tengah layar dengan animasi mulus
+            gameArea.style.transition = 'all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            gameArea.style.left = '50%';
+            gameArea.style.top = '65%';
+
             statusText.innerHTML = dict[cfgLang][forcedRarity === 'legendary' ? 'legendaryRevealed' : (forcedRarity === 'rare' ? 'rareRevealed' : 'commonRevealed')];
             
-            const pool = dbAnimals[forcedRarity]; const animal = pool[Math.floor(Math.random()*pool.length)];
-            animalEmoji.innerText = animal; animalDiv.classList.add('show');
+            const pool = dbAnimals[forcedRarity]; 
+            const animal = pool[Math.floor(Math.random()*pool.length)];
+            animalEmoji.innerText = animal; 
+            animalDiv.classList.add('show');
             
             document.getElementById('plaqueTier').innerText = forcedRarity.toUpperCase() + dict[cfgLang].ownerText;
             if(forcedRarity==='legendary') { document.body.classList.add('legendary-mode'); }
@@ -758,6 +778,7 @@
 
             confetti({ particleCount: forcedRarity==='legendary'?300:150, spread: 80, origin: { y: 0.6 }, colors: ['#FFD700', '#FFA500', '#FFFFFF'] });
         }
+
     </script>
 </body>
 </html>
