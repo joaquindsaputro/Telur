@@ -10,7 +10,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Caveat+Brush&family=Fredoka+One&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Caveat+Brush&family=Fredoka+One&family=Mochiy+Pop+One&family=Noto+Sans+Runic&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -54,10 +53,10 @@
         @keyframes floatCloud { to { transform: translateX(120vw); } }
 
         /* --- TULISAN INSTRUKSIONAL --- */
-        .instruction { position: absolute; top: 5vh; left: 50%; transform: translateX(-50%); color: #FFDE00;  text-shadow: 4px 4px 0px #000; font-size: 40px; font-weight: 900; white-space: pre-wrap; text-align: center; line-height: 1.1; width: 95vw; pointer-events: none; transition: all 0.2s; z-index: 15; letter-spacing: 2px; }
-        .sub-instruction { font-size: 16px; line-height: 1.3; color: #fff; display: block; margin-top: 10px; }
+        .instruction { position: absolute; top: 5vh; left: 50%; transform: translateX(-50%); -webkit-text-stroke: 0.5px #000; color: #FFDE00; text-shadow: 2px 2px 0px #000; font-size: 40px; font-weight: 900; white-space: pre-wrap; text-align: center; line-height: 1.1; width: 95vw; pointer-events: none; transition: all 0.2s; z-index: 15; letter-spacing: 2px; }
+        .sub-instruction { font-size: 16px; line-height: 1.3; color: #fff; display: block; -webkit-text-stroke: 0.1px #000;margin-top: 10px; }
 
-        /* --- AREA MENGGAMBAR (DESAIN PAPAN BATU) --- */
+        /* --- AREA MENGGAMBAR (AIR DRAWING) --- */
         #drawing-area { 
             position: absolute; top: 22vh; left: 50%; transform: translateX(-50%); 
             width: 90vw; max-width: 360px; height: 160px; z-index: 30; 
@@ -65,24 +64,76 @@
         }
         #canvas-container { 
             position: relative; width: 100%; height: 100%; 
-            background: #2b2b2b; /* Warna batu gelap */
-            border: 4px solid #1a1a1a; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.6); 
-            overflow: hidden; 
+            background: transparent; /* Hilangkan papan batu */
+            border: none; box-shadow: none; overflow: visible; 
         }
-        #rune-canvas { width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
         
-        /* Tombol Di Dalam Papan */
-        .btn-inside { 
-            position: absolute; background: transparent; border: none; 
-            cursor: pointer; z-index: 40; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); 
-            user-select: none; -webkit-tap-highlight-color: transparent; 
+        /* 4 Sudut Indikator Gaib */
+        .corner-sparkle { 
+            position: absolute; color: #FFF; font-size: 20px; 
+            text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700; 
+            animation: pulseSparkle 1.5s infinite alternate; pointer-events: none; 
         }
-        .btn-inside:active { transform: scale(0.8); }
-        .btn-clear-inside { top: 10px; right: 10px; font-size: 20px; color: #ff4b2b; }
-        .btn-submit-inside { bottom: 10px; right: 10px; font-size: 32px; filter: drop-shadow(0 0 8px rgba(255,165,0,0.8)); }
+        .top-left { top: -5px; left: -5px; } .top-right { top: -5px; right: -5px; }
+        .bottom-left { bottom: -5px; left: -5px; } .bottom-right { bottom: -5px; right: -5px; }
+        @keyframes pulseSparkle { 0% { transform: scale(0.8); opacity: 0.3; } 100% { transform: scale(1.2); opacity: 1; } }
 
+        /* KANVAS & TINTA ANIMASI SHIFTING COLOR */
+        #rune-canvas { 
+            width: 100%; height: 100%; touch-action: none; cursor: crosshair; 
+            animation: runeGlowShift 2s infinite alternate; /* Animasi Glow */
+        }
+        @keyframes runeGlowShift {
+            0% { filter: drop-shadow(0 0 6px #FFD700) drop-shadow(0 0 12px #FFD700); }
+            50% { filter: drop-shadow(0 0 10px #FF4500) drop-shadow(0 0 18px #FF4500); } /* Merah/Orange */
+            100% { filter: drop-shadow(0 0 6px #FFFFFF) drop-shadow(0 0 12px #FFFFFF); } /* Putih */
+        }
+
+        /* EGG PULSING SAAT SIAP DI-TAP UNTUK SUBMIT */
+        .egg-wrapper.pulsing-ready {
+            animation: eggPulseReady 1s infinite alternate; cursor: pointer;
+        }
+        @keyframes eggPulseReady {
+            0% { filter: drop-shadow(0 0 15px rgba(255,215,0,0.3)) brightness(1); transform: scale(1); }
+            100% { filter: drop-shadow(0 0 35px rgba(255,215,0,0.9)) brightness(1.2); transform: scale(1.02); }
+        }
+
+        /* INFUSED RUNE INSIDE EGG (Beresonansi / Menciut Membesar) */
+        /* INFUSED RUNE INSIDE EGG (Beresonansi / Menciut Membesar & Ganti Warna) */
+        #infused-rune { 
+            position: absolute; top: 50%; left: 50%; 
+            width: 70%; height: 70%; /* Pakai height agar div berbentuk persegi */
+            opacity: 0; z-index: 6; pointer-events: none; 
+            
+            /* Sistem Masking (Menjadikan coretan kanvas sebagai cetakan lubang) */
+            -webkit-mask-size: contain; -webkit-mask-position: center; -webkit-mask-repeat: no-repeat;
+            mask-size: contain; mask-position: center; mask-repeat: no-repeat;
+            
+            /* Total 3 detik = tiap 1 detik ganti warna */
+            animation: runeColorCycle 3s infinite; 
+            transition: opacity 1s; 
+        }
+
+        @keyframes runeColorCycle {
+            /* Detik 1: Merah */
+            0%, 100% { 
+                background-color: #FF0000; 
+                filter: drop-shadow(0 0 15px #FF0000) drop-shadow(0 0 30px #FF0000) brightness(1.5); 
+                transform: translate(-50%, -50%) scale(1); /* <-- scale dibikin tetap 1 */
+            }
+            /* Detik 2: Putih */
+            33% { 
+                background-color: #FFFFFF; 
+                filter: drop-shadow(0 0 10px #FFFFFF) drop-shadow(0 0 20px #FFFFFF) brightness(1.2); 
+                transform: translate(-50%, -50%) scale(1); /* <-- scale dibikin tetap 1 */
+            }
+            /* Detik 3: Emas */
+            66% { 
+                background-color: #FFD700; 
+                filter: drop-shadow(0 0 15px #FFD700) drop-shadow(0 0 30px #FFD700) brightness(1.5); 
+                transform: translate(-50%, -50%) scale(1); /* <-- scale dibikin tetap 1 */
+            }
+        }
         /* --- MAGIC RINGS (TEKS RUNIC SVG) --- */
         .magic-ring { position: absolute; top: -10%; left: -20%; width: 140%; height: 120%; z-index: 20; pointer-events: none; transition: all 0.5s; opacity: 1; overflow: visible; }
         .ring-1 { transform: rotateX(65deg) rotateY(15deg); animation: spinRing 12s linear infinite; }
@@ -98,19 +149,53 @@
             30% { opacity: 1; transform: translateY(0px) scale(1.2) rotate(45deg); } 
             100% { opacity: 0; transform: translateY(80px) scale(0.5) rotate(90deg); } 
         }
-        /* --- GAME AREA (TELUR) --- */
+        /* --- GAME AREA (TELUR & PIXIE DUST) --- */
         .game-area-centered { position: absolute; top: 65%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 260px; z-index: 10; display: flex; justify-content: center; touch-action: none; cursor: pointer; transition: transform 0.1s; }
         .egg-container { width: 100%; height: 100%; position: relative; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.5)); z-index: 5; }
         
-        /* EGG BASE & PATTERNS */
-        .egg-base { width: 100%; height: 100%; background: var(--egg-gradient); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: absolute; top:0; left:0; box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 20px 20px rgba(0,0,0,0.4); overflow: hidden; z-index: 5; transition: opacity 0.3s; }
-        .egg-base::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' opacity='0.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E"); mix-blend-mode: overlay; }
+        /* EGG WRAPPER BARU (PEMOTONG BENTUK TELUR) */
+        .egg-wrapper { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            /* Jalur pemotongan bentuk telur asli yang realistis */
+            clip-path: path("M 100 10 C 150 10 190 70 190 140 C 190 210 150 250 100 250 C 50 250 10 210 10 140 C 10 70 50 10 100 10 Z");
+            z-index: 5; 
+            transition: opacity 0.3s; 
+        }
+
+        /* GAMBAR TEKSTUR TELUR JPG */
+        .egg-texture { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background-size: cover; background-position: center; background-repeat: no-repeat; 
+            background-color: #fff; /* dasar putih */
+            transition: background-image 0.3s;
+        }
         
-        .egg-base.pat-1 { --_g: var(--c1) 0% 5%,var(--c2) 6% 15%,var(--c1) 16% 25%,var(--c2) 26% 35%,var(--c1) 36% 45%,var(--c2) 46% 55%,var(--c1) 56% 65%,var(--c2) 66% 75%,var(--c1) 76% 85%,var(--c2) 86% 95%,#0000 96%; background: radial-gradient(50% 50% at 100% 0,var(--_g)), radial-gradient(50% 50% at 0 100%,var(--_g)), radial-gradient(50% 50%,var(--_g)), radial-gradient(50% 50%,var(--_g)) calc(var(--s)/2) calc(var(--s)/2) var(--c1); background-size: var(--s) var(--s); }
-        .egg-base.pat-2 { --_g: var(--c1) 6.1%,var(--c2) 6.4% 18.6%,var(--c1) 18.9% 31.1%,var(--c2) 31.4% 43.6%,var(--c1) 43.9% 56.1%,var(--c2) 56.4% 68.6%,#0000 68.9%; background: radial-gradient(var(--s) at 100% 0,var(--_g)), radial-gradient(var(--s) at 0 0,var(--_g)), radial-gradient(var(--s) at 0 100%,var(--_g)), radial-gradient(var(--s) at 100% 100%,var(--_g)) var(--c1); background-size: var(--s) var(--s); }
-        .egg-base.pat-3 { --_g: #0000 25%,#0008 47%,var(--c1) 53% 147%,var(--c2) 153% 247%,var(--c1) 253% 347%,var(--c2) 353% 447%,var(--c1) 453% 547%,#0008 553%,#0000 575%; --_s: calc(25%/3) calc(25%/4) at 50%; background: radial-gradient(var(--_s) 100%,var(--_g)), radial-gradient(var(--_s) 100%,var(--_g)) calc(var(--s)/2) calc(3*var(--s)/4), radial-gradient(var(--_s) 0,var(--_g)) calc(var(--s)/2) 0, radial-gradient(var(--_s) 0,var(--_g)) 0 calc(3*var(--s)/4), repeating-linear-gradient(90deg,var(--c3) calc(25%/-6) calc(25%/6),var(--c4) 0 calc(25%/2)); background-size: var(--s) calc(3*var(--s)/2); }
-        .egg-base.pat-4 { --_s: 37.5% 12.5% at 62.5%; --_g: 34% 99%,#0000 101%; --g1: radial-gradient(var(--_s) 100%,#0000 32%,var(--c1) var(--_g)); --g2: radial-gradient(var(--_s) 0,#0000 32%,var(--c1) var(--_g)); --g3: radial-gradient(var(--_s) 100%,#0000 32%,var(--c2) var(--_g)); --g4: radial-gradient(var(--_s) 0,#0000 32%,var(--c2) var(--_g)); background: var(--g1), var(--g2) 0 calc(3*var(--s)), var(--g3) var(--s) calc(3*var(--s)), var(--g4) var(--s) calc(6*var(--s)), var(--g1) calc(2*var(--s)) calc(6*var(--s)), var(--g2) calc(2*var(--s)) calc(9*var(--s)), var(--g3) calc(3*var(--s)) calc(9*var(--s)), var(--g4) calc(3*var(--s)) 0, repeating-linear-gradient(var(--c1) 0 25%,var(--c2) 0 50%); background-size: calc(4*var(--s)) calc(12*var(--s)); }
-        .egg-base.pat-5 { --_g: #0000 24%,var(--c2) 26% 34%,var(--c1) 36% 44%,var(--c2) 46% 54%,var(--c1) 56% 64%,var(--c2) 66% 74%,#0000 76%; background: radial-gradient(100% 100% at 100% 0,var(--_g)), radial-gradient(100% 100% at 0 100%,var(--_g)), radial-gradient(var(--c2) 14%,var(--c1) 16%) calc(var(--s)/2) calc(var(--s)/2); background-size: var(--s) var(--s); }
+        /* OVERLAY WARNA ACAK (EFEK MULTIPLY) */
+        .egg-overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: transparent; 
+            mix-blend-mode: multiply; /* Efek menyerap ke tekstur */
+            transition: background-color 0.3s;
+        }
+
+        /* GAMBAR RETAKAN BARU PNG (MENGGANTIKAN SVG) */
+        .crack-texture { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background-image: url('images/crack.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; 
+            mix-blend-mode: normal; 
+            opacity: 0; /* Awalnya tersembunyi */
+            transition: opacity 0.1s, transform 0.1s ease-out; /* Penting untuk animasi ketukan */
+            z-index: 1.5; /* Di atas warna, di bawah bayangan */
+        }
+
+        /* BAYANGAN 3D DI DALAM TELUR */
+        .egg-shadow-inset {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            box-shadow: inset -20px -20px 40px rgba(0,0,0,0.6), inset 10px 10px 20px rgba(255,255,255,0.3);
+            pointer-events: none; /* Supaya klik tembus */
+            z-index: 2;
+        }
 
         /* --- MAGIC RINGS (TEKS RUNIC SVG BARU DENGAN BORDER DOUBLE & PADDING) --- */
         .magic-ring { 
@@ -253,9 +338,12 @@
 
 <div id="drawing-area">
         <div id="canvas-container">
-            <div class="btn-inside btn-clear-inside" onclick="clearCanvas()">✖️</div> 
+            <div class="corner-sparkle top-left">✧</div>
+            <div class="corner-sparkle top-right">✧</div>
+            <div class="corner-sparkle bottom-left">✧</div>
+            <div class="corner-sparkle bottom-right">✧</div>
+            
             <canvas id="rune-canvas" width="300" height="120"></canvas>
-            <div class="btn-inside btn-submit-inside" onclick="submitRune()">🔥</div> 
         </div>
     </div>
 
@@ -288,19 +376,23 @@
                 </text>
             </svg>
             
-            <div class="egg-base" id="eggBase">
-                <img id="infused-rune" src="" alt="">
+            <div class="egg-wrapper" id="eggBase">
+                <div class="egg-texture" id="eggTexture"></div>
+                <div class="egg-overlay" id="eggOverlay"></div>
+                <div class="crack-texture" id="crackTexture"></div>
+                <div class="egg-shadow-inset"></div>
+                
+                <div class="crack-texture" id="crackTexture"></div>
+                <div class="egg-shadow-inset"></div>
+                
+                <div id="infused-rune"></div>
             </div>
             
             <svg class="crack-overlay-svg" viewBox="0 0 200 260">
                 <defs><pattern id="pat-rare" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="4" fill="rgba(255,255,255,0.4)"/></pattern></defs>
                 <path id="egg-pattern-dots" d="M100,10 C150,10 190,70 190,140 C190,210 150,250 100,250 C50,250 10,210 10,140 C10,70 50,10 100,10 Z" fill="url(#pat-rare)" style="opacity:0; transition:opacity 0.3s;" pointer-events="none"/>
                 
-                <g class="crack-group" id="stage1"><path class="crack-path" d="M 100 130 L 85 105 L 70 100 M 100 130 L 125 145 M 100 130 L 105 160" stroke-width="2" /></g>
-                <g class="crack-group" id="stage2"><path class="crack-path" d="M 70 100 L 50 85 M 90 90 L 80 65 M 140 130 L 160 115 M 95 180 L 80 210" stroke-width="2.5" /></g>
-                <g class="crack-group" id="stage3"><path class="crack-path" d="M 40 95 L 20 105 M 95 50 L 105 20 M 145 185 L 165 215 M 60 215 L 35 230" stroke-width="3" /></g>
-                <g class="crack-group" id="stage4"><path class="crack-path" d="M 20 105 L 10 130 M 105 20 L 135 25 M 165 215 L 185 190 M 35 230 L 15 200" stroke-width="4" opacity="0.8" /></g>
-            </svg>
+                </svg>
         </div>
         
         <div class="animal-reveal" id="animalContent">
@@ -320,16 +412,15 @@
 
     <div id="tap-feedback">🔨</div>
 
-    <script>
-        let gameState = 'locked'; // 'locked', 'scanning', 'ready', 'broken'
+ <script>
+        let gameState = 'locked'; 
         let clicks = 0; let forcedRarity = 'common'; let audioCtx;
         
         const statusText = document.getElementById('statusText');
         const drawingArea = document.getElementById('drawing-area');
         const gameArea = document.getElementById('gameArea');
         const eggContainer = document.getElementById('eggContainer');
-        const eggBase = document.getElementById('eggBase');
-        const crackStages = [document.getElementById('stage1'), document.getElementById('stage2'), document.getElementById('stage3'), document.getElementById('stage4')];
+        const eggBase = document.getElementById('eggBase'); 
         const animalDiv = document.getElementById('animalContent');
         const animalEmoji = document.getElementById('animal-emoji');
         const ownerPlaque = document.getElementById('owner-plaque');
@@ -337,98 +428,72 @@
         const infusedRune = document.getElementById('infused-rune');
         const tapFeedback = document.getElementById('tap-feedback');
 
-        // --- DAFTAR ALAT KETUK (MODULAR) ---
         const tapperList = ['🔨', '🪄', '🍭', '⛏️', '🗡️', '🧹', '🍡', '🪓', '🎸', '🥊'];
-
         const selTapper = document.getElementById('sel-tapper');
-        if (selTapper) {
-            tapperList.forEach(emoji => {
-                let opt = document.createElement('option');
-                opt.value = emoji;
-                opt.innerText = emoji;
-                selTapper.appendChild(opt);
-            });
-        }
+        if (selTapper) { tapperList.forEach(emoji => { let opt = document.createElement('option'); opt.value = emoji; opt.innerText = emoji; selTapper.appendChild(opt); }); }
 
-        // AMBIL PENGATURAN
         let cfgLang = localStorage.getItem('cfgLang') || 'id';
         let cfgTheme = localStorage.getItem('cfgTheme') || 'lego';
         let cfgTapper = localStorage.getItem('cfgTapper') || 'none';
         
-        // SETEL KE MENU UI
-        document.getElementById('sel-theme').value = cfgTheme;
-        document.getElementById('sel-lang').value = cfgLang;
+        if(document.getElementById('sel-theme')) document.getElementById('sel-theme').value = cfgTheme;
+        if(document.getElementById('sel-lang')) document.getElementById('sel-lang').value = cfgLang;
         if(document.getElementById('sel-tapper')) document.getElementById('sel-tapper').value = cfgTapper;
 
-        // TEKS CTA & KAMUS BAHASA (Diperbarui dengan kata "Owner")
         const dict = {
-            id: { 
-                start: "SUBSCRIBE & TULIS NAMAMU!\n<span class='sub-instruction'>Kita buktikan Spirit Animal apa yang kamu dapat!</span>", 
-                ready: "SEKARANG PECAHKAN TELURNYA!", 
-                legendaryRevealed: "LEGENDARY ANIMAL!", 
-                rareRevealed: "RARE ANIMAL!", 
-                commonRevealed: "NEW ANIMAL!",
-                ownerText: " MILIK:" // Bahasa Indonesia
-            },
-            en: { 
-                start: "SUBSCRIBE & COMMENT YOUR NAME!\n<span class='sub-instruction'>Let's reveal your mythical Spirit Animal!</span>", 
-                ready: "NOW SMASH THE EGG!", 
-                legendaryRevealed: "LEGENDARY ANIMAL!", 
-                rareRevealed: "RARE ANIMAL!", 
-                commonRevealed: "NEW ANIMAL!",
-                ownerText: " OWNER:" // Bahasa Inggris
-            }
+            id: { start: "SUBSCRIBE & TULIS NAMAMU!\n<span class='sub-instruction'>Kita buktikan Spirit Animal apa yang kamu dapat!</span>", ready: "SEKARANG PECAHKAN TELURNYA!", legendaryRevealed: "LEGENDARY ANIMAL!", rareRevealed: "RARE ANIMAL!", commonRevealed: "NEW ANIMAL!", ownerText: " MILIK:" },
+            en: { start: "SUBSCRIBE & COMMENT YOUR NAME!\n<span class='sub-instruction'>Let's reveal your Spirit Animal!</span>", ready: "NOW SMASH THE EGG!", legendaryRevealed: "LEGENDARY ANIMAL!", rareRevealed: "RARE ANIMAL!", commonRevealed: "NEW ANIMAL!", ownerText: " OWNER:" }
         };
 
         let dbAnimals = { common: ['🐔','🦆','🐰','🐭','🐱','🐶','🐷'], rare: ['🦊','🐼','🐨','🦁','🐯','🐙'], legendary: ['🦄','🐉','🦖','🐦‍🔥'] };
 
-        // --- SISTEM TEMA AI ---
+        const crackStyles = [
+            { opacity: 0.25, transform: 'scale(0.8) translate(-2px, 1px) rotate(-1deg)' },
+            { opacity: 0.5, transform: 'scale(1.0) translate(2px, -1px) rotate(1deg)' },
+            { opacity: 0.75, transform: 'scale(1.15) translate(-1px, 2px) rotate(-2deg)' },
+            { opacity: 0.9, transform: 'scale(1.25) translate(1px, -2px) rotate(2deg)' }
+        ];
+
         function applyThemeAI() {
-            document.querySelector('.layer-pagi').style.backgroundImage = `url('themes/${cfgTheme}/pagi.jpg')`;
-            document.querySelector('.layer-siang').style.backgroundImage = `url('themes/${cfgTheme}/siang.jpg')`;
-            document.querySelector('.layer-sore').style.backgroundImage  = `url('themes/${cfgTheme}/sore.jpg')`;
-            document.querySelector('.layer-malam').style.backgroundImage = `url('themes/${cfgTheme}/malam.jpg')`;
+            const lPagi = document.querySelector('.layer-pagi'); const lSiang = document.querySelector('.layer-siang'); const lSore = document.querySelector('.layer-sore'); const lMalam = document.querySelector('.layer-malam');
+            if(lPagi) lPagi.style.backgroundImage = `url('themes/${cfgTheme}/pagi.jpg')`; if(lSiang) lSiang.style.backgroundImage = `url('themes/${cfgTheme}/siang.jpg')`; if(lSore) lSore.style.backgroundImage  = `url('themes/${cfgTheme}/sore.jpg')`; if(lMalam) lMalam.style.backgroundImage = `url('themes/${cfgTheme}/malam.jpg')`;
         }
 
-        function openSettings() { document.getElementById('settings-modal').style.display = 'block'; }
-        function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+        function openSettings() { const modal = document.getElementById('settings-modal'); if(modal) modal.style.display = 'block'; }
+        function closeSettings() { const modal = document.getElementById('settings-modal'); if(modal) modal.style.display = 'none'; }
         
         function updateSettings() { 
-            cfgTheme = document.getElementById('sel-theme').value; 
-            cfgLang = document.getElementById('sel-lang').value;
+            if(document.getElementById('sel-theme')) cfgTheme = document.getElementById('sel-theme').value; 
+            if(document.getElementById('sel-lang')) cfgLang = document.getElementById('sel-lang').value;
             if(document.getElementById('sel-tapper')) cfgTapper = document.getElementById('sel-tapper').value;
-
-            localStorage.setItem('cfgTheme', cfgTheme); 
-            localStorage.setItem('cfgLang', cfgLang); 
-            localStorage.setItem('cfgTapper', cfgTapper); 
-            
-            applyThemeAI(); 
-            if(gameState === 'locked') applyLanguage();
+            localStorage.setItem('cfgTheme', cfgTheme); localStorage.setItem('cfgLang', cfgLang); localStorage.setItem('cfgTapper', cfgTapper); 
+            applyThemeAI(); if(gameState === 'locked') applyLanguage();
         }
 
-        // --- AUDIO SYSTEM ---
         function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); }
         function playThudSound() { initAudio(); const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'triangle'; osc.frequency.setValueAtTime(100, t); osc.frequency.exponentialRampToValueAtTime(20, t + 0.15); gain.gain.setValueAtTime(0.8, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(t); osc.stop(t + 0.15); }
         function playCrackSound(i) { initAudio(); const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'sawtooth'; osc.frequency.setValueAtTime(50+Math.random()*50, t); osc.frequency.exponentialRampToValueAtTime(10, t+0.1); gain.gain.setValueAtTime(0.5+(i*0.1), t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.15); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(t); osc.stop(t+0.15); }
         function playMagicSound() { initAudio(); const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(800, t); osc.frequency.linearRampToValueAtTime(1200, t+1); gain.gain.setValueAtTime(0, t); gain.gain.linearRampToValueAtTime(0.3, t+0.5); gain.gain.linearRampToValueAtTime(0, t+1.5); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(t); osc.stop(t+1.5); }
         
-        // --- DRAWING CANVAS LOGIC ---
+        // --- DRAWING CANVAS LOGIC (Efek Kuas Kaligrafi) ---
         const canvas = document.getElementById('rune-canvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
         
         const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
+        const cRect = canvas.getBoundingClientRect();
+        canvas.width = cRect.width * dpr;
+        canvas.height = cRect.height * dpr;
         ctx.scale(dpr, dpr);
         
-        ctx.strokeStyle = '#FFD700';
-        ctx.lineWidth = 3; 
+        ctx.strokeStyle = '#FFFFFF';
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = '#FFD700';
+
+        // Variabel untuk menghitung kecepatan & ketebalan kuas
+        let lastPos = {x: 0, y: 0};
+        let lastTime = 0;
+        let currentWidth = 10; // Tebal maksimal (awal coret)
 
         function getPos(e) {
             const r = canvas.getBoundingClientRect();
@@ -436,159 +501,180 @@
             return { x: e.clientX - r.left, y: e.clientY - r.top };
         }
         
-        function startDraw(e) { if(gameState !== 'locked') return; e.preventDefault(); isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); initAudio(); }
+        function startDraw(e) { 
+            if(gameState !== 'locked') return; 
+            e.preventDefault(); 
+            isDrawing = true; 
+            
+            lastPos = getPos(e); 
+            lastTime = Date.now();
+            currentWidth = 10; // Reset ke tebal saat mulai nulis
+            
+            ctx.beginPath(); 
+            ctx.moveTo(lastPos.x, lastPos.y); 
+            initAudio(); 
+        }
+        
         function draw(e) { 
             if(!isDrawing || gameState !== 'locked') return; 
             e.preventDefault(); 
+            
             const pos = getPos(e); 
+            const now = Date.now();
+            
+            // Hitung kecepatan ayunan jari/mouse
+            const dx = pos.x - lastPos.x;
+            const dy = pos.y - lastPos.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const timeDelta = now - lastTime || 1; // Cegah pembagian dengan 0
+            const velocity = distance / timeDelta;
+            
+            // Logika Kuas: Makin cepat = makin tipis (min 4). Makin lambat = tebal (max 10)
+            // Angka 3 adalah tingkat sensitivitas (bisa dinaik/turunkan kalau kurang pas)
+            let targetWidth = 10 - (velocity * 7);
+            if (targetWidth < 2) targetWidth = 2;
+            if (targetWidth > 10) targetWidth = 10;
+            
+            // Perhalus transisi ukuran brush biar pinggirannya tidak patah-patah
+            currentWidth += (targetWidth - currentWidth) * 0.3;
+            
+            ctx.lineWidth = currentWidth;
+            
             ctx.lineTo(pos.x, pos.y); 
             ctx.stroke(); 
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
+            
+            // Mulai path baru dari titik sekarang agar dinamis
+            ctx.beginPath(); 
+            ctx.moveTo(pos.x, pos.y); 
+            
+            lastPos = pos;
+            lastTime = now;
         }
-        function endDraw(e) { if(gameState !== 'locked') return; isDrawing = false; ctx.beginPath(); }
+        
+        function endDraw(e) { 
+            if(gameState !== 'locked') return; 
+            isDrawing = false; 
+            ctx.beginPath(); 
+            
+            const blank = document.createElement('canvas'); blank.width = canvas.width; blank.height = canvas.height;
+            if(canvas.toDataURL() !== blank.toDataURL()) {
+                if(eggBase) eggBase.classList.add('pulsing-ready');
+            }
+        }
 
         canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', endDraw);
         canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', endDraw);
 
-        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+        function clearCanvas() { 
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            if(eggBase) eggBase.classList.remove('pulsing-ready');
+        }
+
+        canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', endDraw);
+        canvas.addEventListener('touchstart', startDraw, {passive:false}); canvas.addEventListener('touchmove', draw, {passive:false}); window.addEventListener('touchend', endDraw);
+
+        function clearCanvas() { 
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            if(eggBase) eggBase.classList.remove('pulsing-ready');
+        }
 
         // --- INFUSION LOGIC ---
         function submitRune() {
             if(gameState !== 'locked') return;
-            
             const blank = document.createElement('canvas'); blank.width = canvas.width; blank.height = canvas.height;
-            if(canvas.toDataURL() === blank.toDataURL()) { alert("Gambarlah nama dulu sebelum memecahkan segel!"); return; }
+            if(canvas.toDataURL() === blank.toDataURL()) return;
 
             playMagicSound();
             gameState = 'scanning';
+            if(eggBase) eggBase.classList.remove('pulsing-ready'); // Matikan denyutan
             
             const runeData = canvas.toDataURL();
-            infusedRune.src = runeData; 
-            
+            infusedRune.style.webkitMaskImage = `url(${runeData})`; 
+            infusedRune.style.maskImage = `url(${runeData})`;
             drawingArea.style.opacity = '0'; 
             
             const tempRune = document.createElement('img');
             tempRune.src = runeData;
             const canvasRect = canvas.getBoundingClientRect();
             
-            tempRune.style.position = 'fixed';
-            tempRune.style.left = canvasRect.left + 'px';
-            tempRune.style.top = canvasRect.top + 'px';
-            tempRune.style.width = canvasRect.width + 'px';
-            tempRune.style.height = canvasRect.height + 'px';
-            tempRune.style.zIndex = '100';
-            tempRune.style.transition = 'all 1s cubic-bezier(0.25, 0.1, 0.25, 1)';
-            tempRune.style.filter = 'drop-shadow(0 0 10px gold) brightness(1.5)';
+            tempRune.style.position = 'fixed'; tempRune.style.left = canvasRect.left + 'px'; tempRune.style.top = canvasRect.top + 'px'; tempRune.style.width = canvasRect.width + 'px'; tempRune.style.height = canvasRect.height + 'px'; tempRune.style.zIndex = '100'; tempRune.style.transition = 'all 1s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            // Glow pada rune terbang
+            tempRune.style.filter = 'drop-shadow(0 0 15px gold) brightness(1.5)';
             tempRune.style.pointerEvents = 'none';
             document.body.appendChild(tempRune);
             
             setTimeout(() => {
                 const eggRect = eggContainer.getBoundingClientRect();
-                const targetW = canvasRect.width * 0.7;
-                const targetH = canvasRect.height * 0.7;
-                
-                tempRune.style.left = (eggRect.left + (eggRect.width / 2) - (targetW / 2)) + 'px';
-                tempRune.style.top = (eggRect.top + (eggRect.height / 2) - (targetH / 2)) + 'px';
-                tempRune.style.width = targetW + 'px';
-                tempRune.style.height = targetH + 'px';
-                tempRune.style.opacity = '0.5';
+                const targetW = canvasRect.width * 0.7; const targetH = canvasRect.height * 0.7;
+                tempRune.style.left = (eggRect.left + (eggRect.width / 2) - (targetW / 2)) + 'px'; tempRune.style.top = (eggRect.top + (eggRect.height / 2) - (targetH / 2)) + 'px'; tempRune.style.width = targetW + 'px'; tempRune.style.height = targetH + 'px'; tempRune.style.opacity = '0.5';
             }, 50);
 
             const runicChars = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛊ','ᛏ','ᛒ','ᛖ','ᛗ','ᛚ','ᛜ','ᛞ','ᛟ'];
             let dustInterval = setInterval(() => {
-                const dust = document.createElement('div');
-                dust.innerText = runicChars[Math.floor(Math.random() * runicChars.length)];
-                dust.className = 'runic-sparkle';
-                dust.style.left = (20 + Math.random() * 60) + '%';
-                dust.style.top = (-20 + Math.random() * 20) + '%';
-                dust.style.fontSize = (15 + Math.random() * 25) + 'px';
-                eggContainer.appendChild(dust);
+                const dust = document.createElement('div'); dust.innerText = runicChars[Math.floor(Math.random() * runicChars.length)]; dust.className = 'runic-sparkle'; dust.style.left = (20 + Math.random() * 60) + '%'; dust.style.top = (-20 + Math.random() * 20) + '%'; dust.style.fontSize = (15 + Math.random() * 25) + 'px'; eggContainer.appendChild(dust);
                 setTimeout(() => dust.remove(), 1500);
             }, 100);
             
             setTimeout(() => {
-                clearInterval(dustInterval);
-                tempRune.remove(); 
-                eggContainer.classList.add('unlocked'); 
-                infusedRune.style.opacity = '0.8'; 
-                
-                setTimeout(() => {
-                    gameState = 'ready';
-                    statusText.innerHTML = dict[cfgLang].ready;
-                    drawingArea.style.display = 'none';
-                }, 1000);
+                clearInterval(dustInterval); tempRune.remove(); eggContainer.classList.add('unlocked'); infusedRune.style.opacity = '0.8'; 
+                setTimeout(() => { gameState = 'ready'; if(statusText && dict[cfgLang]) statusText.innerHTML = dict[cfgLang].ready; drawingArea.style.display = 'none'; }, 1000);
             }, 1200);
         }
 
         // --- FUNGSI RESET / REFRESH TIER ---
         function resetGame() {
-            gameState = 'locked';
-            clicks = 0;
-            
-            applyLanguage();
+            gameState = 'locked'; clicks = 0; applyLanguage();
             
             drawingArea.style.display = 'flex';
-            setTimeout(() => {
-                drawingArea.style.opacity = '1';
-            }, 50);
+            setTimeout(() => { drawingArea.style.opacity = '1'; }, 50);
             clearCanvas();
             
-            gameArea.style.transform = 'translate(-50%, -50%)'; 
-            gameArea.style.left = '50%';
-            gameArea.style.top = '65%';
-            eggBase.style.opacity = '1';
-            crackStages.forEach(s => s.style.opacity = 0);
-            eggContainer.classList.remove('unlocked'); 
-            eggContainer.classList.remove('shake-hard');
+            gameArea.style.transform = 'translate(-50%, -50%)'; gameArea.style.left = '50%'; gameArea.style.top = '65%';
+            if(eggBase) { eggBase.style.opacity = '1'; eggBase.className = 'egg-wrapper'; eggBase.classList.remove('pulsing-ready'); }
             
-            animalDiv.classList.remove('show');
-            ownerPlaque.classList.remove('show');
-            document.body.classList.remove('legendary-mode');
+            eggContainer.classList.remove('unlocked'); eggContainer.classList.remove('shake-hard');
+            animalDiv.classList.remove('show'); ownerPlaque.classList.remove('show'); document.body.classList.remove('legendary-mode');
             
-            infusedRune.src = '';
+            infusedRune.style.webkitMaskImage = 'none'; 
+            infusedRune.style.maskImage = 'none'; 
             infusedRune.style.opacity = '0';
 
-            eggBase.className = 'egg-base'; 
-            const pDots = document.getElementById('egg-pattern-dots'); 
-            if(pDots) pDots.style.opacity = 0; 
+            const crackTexture = document.getElementById('crackTexture');
+            if(crackTexture) { crackTexture.style.opacity = '0'; crackTexture.style.transform = 'none'; }
 
+            const randTexture = Math.floor(Math.random() * 6) + 1;
+            const eggTextureEl = document.getElementById('eggTexture');
+            if(eggTextureEl) eggTextureEl.style.backgroundImage = `url('images/egg/${randTexture}.jpg')`;
+
+            const eggOverlay = document.getElementById('eggOverlay');
             if(forcedRarity === 'rare') { 
-                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #11998e, #38ef7d)'); 
-                if(pDots) pDots.style.opacity = 0.6; 
-            }
-            else if(forcedRarity === 'legendary') { 
-                const patNum = Math.floor(Math.random() * 5) + 1; 
-                eggBase.classList.add(`pat-${patNum}`); 
-                const cols = getRandColors(4); 
-                eggBase.style.setProperty('--c1', cols[0]); 
-                eggBase.style.setProperty('--c2', cols[1]); 
-                eggBase.style.setProperty('--c3', cols[2]); 
-                eggBase.style.setProperty('--c4', cols[3]); 
-                const sizes = { 1: '150px', 2: '150px', 3: '140px', 4: '30px', 5: '100px' }; 
-                eggBase.style.setProperty('--s', sizes[patNum]); 
-            }
-            else { 
-                document.documentElement.style.setProperty('--egg-gradient', 'linear-gradient(135deg, #ff00cc, #333399)'); 
+                const rareColors = ['#00ffcc', '#38ef7d', '#00b4db', '#ff416c', '#4facfe'];
+                if(eggOverlay) eggOverlay.style.backgroundColor = rareColors[Math.floor(Math.random() * rareColors.length)];
+            } else if(forcedRarity === 'legendary') { 
+                const legColors = ['#FFD700', '#FF4500', '#DC143C', '#8A2BE2', '#FF1493'];
+                if(eggOverlay) eggOverlay.style.backgroundColor = legColors[Math.floor(Math.random() * legColors.length)];
+            } else { 
+                const commonColors = ['#ffb6c1', '#aed9e0', '#ffdead', '#d3d3d3', '#e0c3fc'];
+                if(eggOverlay) eggOverlay.style.backgroundColor = commonColors[Math.floor(Math.random() * commonColors.length)];
             }
         }
 
-        function getRandColors(count) { const legColors = ['#FFD700', '#FF4500', '#DC143C', '#8A2BE2', '#00FFFF', '#FF1493', '#32CD32', '#FF00FF', '#1E90FF']; return legColors.sort(() => 0.5 - Math.random()).slice(0, count); }
-
-        function setRarity(r) { 
-            forcedRarity = r; 
-            resetGame();
-        }
-
-        function applyLanguage() { statusText.innerHTML = dict[cfgLang].start; }
+        function setRarity(r) { forcedRarity = r; resetGame(); }
+        function applyLanguage() { if(statusText && dict[cfgLang]) { statusText.innerHTML = dict[cfgLang].start; } }
         
-        applyThemeAI();
-        resetGame(); 
+        applyThemeAI(); resetGame(); 
 
-        // --- DRAG & SMASH LOGIC ---
+        // --- DRAG, SMASH & TAP TO CAST LOGIC ---
         let isPointerDown = false; let isDraggingEgg = false; let eggOffsetX, eggOffsetY; let lastWallHit = 0;
 
         window.addEventListener('pointerdown', (e) => {
+            // TAP TO CAST (Sentuh Telur Untuk Submit)
+            if (gameState === 'locked' && e.target.closest('#eggContainer')) {
+                const blank = document.createElement('canvas'); blank.width = canvas.width; blank.height = canvas.height;
+                if(canvas.toDataURL() !== blank.toDataURL()) { submitRune(); }
+                return;
+            }
+
             if(gameState !== 'ready') return;
             isPointerDown = true;
             
@@ -599,26 +685,19 @@
 
             if (e.target.closest('#eggContainer')) {
                 isDraggingEgg = true; 
-                const rect = gameArea.getBoundingClientRect();
-                eggOffsetX = e.clientX - rect.left; 
-                eggOffsetY = e.clientY - rect.top;
+                const gRect = gameArea.getBoundingClientRect();
+                eggOffsetX = e.clientX - gRect.left; eggOffsetY = e.clientY - gRect.top;
                 gameArea.style.cursor = 'grabbing';
             }
         });
 
         window.addEventListener('pointermove', (e) => {
             if (!isPointerDown || gameState !== 'ready') return;
-            
-            if(cfgTapper !== 'none') {
-                tapFeedback.style.left = e.clientX+'px'; tapFeedback.style.top = e.clientY+'px';
-            }
+            if(cfgTapper !== 'none') { tapFeedback.style.left = e.clientX+'px'; tapFeedback.style.top = e.clientY+'px'; }
 
             if (isDraggingEgg) {
-                let targetX = e.clientX - eggOffsetX + (gameArea.offsetWidth / 2);
-                let targetY = e.clientY - eggOffsetY + (gameArea.offsetHeight / 2);
-                
-                const halfW = gameArea.offsetWidth/2; const halfH = gameArea.offsetHeight/2;
-                let hitWall = false;
+                let targetX = e.clientX - eggOffsetX + (gameArea.offsetWidth / 2); let targetY = e.clientY - eggOffsetY + (gameArea.offsetHeight / 2);
+                const halfW = gameArea.offsetWidth/2; const halfH = gameArea.offsetHeight/2; let hitWall = false;
 
                 if(targetX < halfW) { targetX = halfW; hitWall = true; } if(targetX > window.innerWidth - halfW) { targetX = window.innerWidth - halfW; hitWall = true; }
                 if(targetY < halfH) { targetY = halfH; hitWall = true; } if(targetY > window.innerHeight - halfH) { targetY = window.innerHeight - halfH; hitWall = true; }
@@ -636,32 +715,41 @@
 
         function tapEgg() {
             if (gameState !== 'ready') return; 
-            let maxC = forcedRarity==='legendary'?10:(forcedRarity==='rare'?7:4);
-            clicks++; playCrackSound(clicks/maxC);
+            let maxClicks = forcedRarity === 'legendary' ? 10 : (forcedRarity === 'rare' ? 7 : 4);
+            clicks++; playCrackSound(clicks / maxClicks);
             if (navigator.vibrate) navigator.vibrate(50);
             
             if(cfgTapper !== 'none') { 
-                tapFeedback.style.transition = 'transform 0.05s ease-out'; 
-                tapFeedback.style.transform = 'translate(-30%, -80%) rotate(-50deg)'; 
+                tapFeedback.style.transition = 'transform 0.05s ease-out'; tapFeedback.style.transform = 'translate(-30%, -80%) rotate(-50deg)'; 
                 setTimeout(() => { if(isPointerDown) { tapFeedback.style.transition = 'transform 0.1s ease-in'; tapFeedback.style.transform = 'translate(-30%, -80%) rotate(0deg)'; } }, 100); 
             }
 
             eggContainer.classList.remove('shake-hard'); void eggContainer.offsetWidth; eggContainer.classList.add('shake-hard');
             
-            if(clicks < maxC) { const sIdx = Math.floor((clicks/maxC)*crackStages.length); if(sIdx>0 && sIdx<=crackStages.length) crackStages[sIdx-1].style.opacity = 1; }
-            else { gameState = 'broken'; setTimeout(breakEgg, 250); }
+            const totalStages = crackStyles.length; const stageIndex = Math.floor((clicks / maxClicks) * totalStages);
+            const crackTexture = document.getElementById('crackTexture');
+
+            if (crackTexture && stageIndex >= 0 && stageIndex < totalStages) {
+                const baseStyle = crackStyles[stageIndex];
+                crackTexture.style.opacity = baseStyle.opacity;
+                const randomX = (Math.random() - 0.5) * 4; const randomY = (Math.random() - 0.5) * 4; const randomRotate = (Math.random() - 0.5) * 2; 
+                crackTexture.style.transform = `${baseStyle.transform} translate(${randomX}px, ${randomY}px) rotate(${randomRotate}deg)`;
+            } else if (crackTexture && clicks < maxClicks) {
+                crackTexture.style.opacity = crackStyles[0].opacity; crackTexture.style.transform = crackStyles[0].transform;
+            }
+            
+            if (clicks >= maxClicks) { gameState = 'broken'; setTimeout(breakEgg, 250); }
         }
 
         function breakEgg() {
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            eggBase.style.opacity = '0'; crackStages.forEach(s=>s.style.opacity=0); infusedRune.style.opacity='0';
+            if(eggBase) eggBase.style.opacity = '0'; infusedRune.style.opacity='0';
             
-            statusText.innerHTML = forcedRarity==='legendary'?dict[cfgLang].legendaryRevealed:(forcedRarity==='rare'?dict[cfgLang].rareRevealed:dict[cfgLang].commonRevealed);
+            statusText.innerHTML = dict[cfgLang][forcedRarity === 'legendary' ? 'legendaryRevealed' : (forcedRarity === 'rare' ? 'rareRevealed' : 'commonRevealed')];
             
             const pool = dbAnimals[forcedRarity]; const animal = pool[Math.floor(Math.random()*pool.length)];
             animalEmoji.innerText = animal; animalDiv.classList.add('show');
             
-            // PERBAIKAN: Menggunakan dict[cfgLang].ownerText agar sesuai bahasa
             document.getElementById('plaqueTier').innerText = forcedRarity.toUpperCase() + dict[cfgLang].ownerText;
             if(forcedRarity==='legendary') { document.body.classList.add('legendary-mode'); }
             
