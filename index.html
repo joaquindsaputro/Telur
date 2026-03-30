@@ -230,7 +230,86 @@
             z-index: 2;
         }
 
-        /* SCANNER & INFUSED RUNE INSIDE EGG */
+/* === TAMBAHAN 3: CSS PAPAN & INPUT === */
+
+/* Container Papan Utama (Menggunakan style texture kayu mirip plaque hewan) */
+#papan-promosi {
+    position: absolute;
+    top: 13vh; /* Di bawah status text, di atas kanvas */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* Texture Kayu Sederhana via CSS Gradient & Border */
+    background: #6b543f;
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.05) 25%, transparent 25%), 
+                      linear-gradient(225deg, rgba(255,255,255,0.05) 25%, transparent 25%);
+    background-size: 10px 10px;
+    
+    border: 6px solid #3a2d21;
+    border-radius: 10px;
+    padding: 10px 20px;
+    
+    width: 85vw;
+    max-width: 320px;
+    text-align: center;
+    z-index: 18; /* Di bawah kanvas agar tidak ganggu tulisan */
+    
+    box-shadow: 0 6px 0 rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.3);
+    pointer-events: none; /* Klik tembus */
+    
+    transition: opacity 0.5s ease;
+}
+
+/* Sembunyikan papan jika sedang menggambar agar tidak lag/mengganggu */
+body:not(.locked) #papan-promosi {
+    opacity: 0;
+}
+
+/* Baris Atas: Like & Subscribe (Font Tebal Kuning) */
+.promosi-head {
+    color: #FFDE00; /* Kuning Lego */
+    font-family: var(--font-current); /* Bangers */
+    font-weight: bold;
+    font-size: 22px;
+    -webkit-text-stroke: 1px #000;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 2px;
+    letter-spacing: 1px;
+}
+
+/* Baris Bawah: Nama Channel (Font Tebal Putih + Outline) */
+#promosi-channel {
+    color: #FFFFFF; /* Putih */
+    font-family: 'Arial Black', 'Fredoka One', sans-serif; /* Font tebal solid */
+    font-weight: 900;
+    font-size: 18px;
+    
+    /* Efek Outline Hitam Tebal */
+    -webkit-text-stroke: 1.5px #000;
+    
+    text-shadow: 2px 2px 0 #000;
+    text-transform: uppercase; /* Paksa kapital biar gagah */
+    
+    /* Handle teks kepanjangan */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+/* Styling Input di dalam Modal Settings */
+#in-channel-name {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size: 16px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+#in-channel-name:focus {
+    border-color: #ff9f43;
+    outline: none;
+}
 
         
         #infused-rune { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; max-height: 70%; object-fit: contain; opacity: 0; z-index: 6; pointer-events: none; mix-blend-mode: color-dodge; filter: drop-shadow(0 0 10px gold) brightness(1.5); transition: opacity 1s; }
@@ -329,6 +408,16 @@
     <div class="cloud c1">☁️</div><div class="cloud c2">☁️</div><div class="cloud c3">☁️</div>
     
     <div class="instruction" id="statusText"></div>
+    <div id="papan-promosi">
+    <div class="promosi-head">Like & Subscribe</div>
+    <div id="promosi-channel">NAMA CHANNEL</div>
+</div>
+
+
+<div class="setting-row">
+    <label>Nama Channel:</label>
+    <input type="text" id="in-channel-name" oninput="updateSettings()" placeholder="Ketik nama channel..." maxlength="20">
+</div>
 
 <div id="drawing-area">
         <div id="canvas-container">
@@ -787,6 +876,43 @@
             confetti({ particleCount: forcedRarity==='legendary'?300:150, spread: 80, origin: { y: 0.6 }, colors: ['#FFD700', '#FFA500', '#FFFFFF'] });
         }
 
+     // === TAMBAHAN 4: JAVASCRIPT LOGIK ===
+
+// [1] Tambahkan di bagian deklarasi variabel awal (di bawah let cfgTapper...)
+let cfgChannelName = localStorage.getItem('cfgChannelName') || 'NAMA CHANNEL';
+const papanPromosi = document.getElementById('papan-promosi');
+const displayChannelPromosi = document.getElementById('promosi-channel');
+const inChannelName = document.getElementById('in-channel-name');
+
+// [2] Cari blok inisialisasi settings (di bawah inisialisasi selTapper), tambahkan ini:
+if(inChannelName) inChannelName.value = cfgChannelName;
+applyChannelName(); // Terapkan saat load
+
+// [3] Tambahkan fungsi baru untuk menerapkan nama ke papan
+function applyChannelName() {
+    if(displayChannelPromosi) displayChannelPromosi.innerText = cfgChannelName;
+}
+
+// [4] Update fungsi updateSettings() yang sudah ada
+// Ganti fungsi updateSettings() lama dengan ini:
+function updateSettings() { 
+    if(document.getElementById('sel-theme')) cfgTheme = document.getElementById('sel-theme').value; 
+    if(document.getElementById('sel-lang')) cfgLang = document.getElementById('sel-lang').value;
+    if(document.getElementById('sel-tapper')) cfgTapper = document.getElementById('sel-tapper').value;
+    
+    // Ambil nilai dari input baru
+    if(inChannelName) cfgChannelName = inChannelName.value || 'NAMA CHANNEL';
+    
+    // Simpan ke LocalStorage
+    localStorage.setItem('cfgTheme', cfgTheme); 
+    localStorage.setItem('cfgLang', cfgLang); 
+    localStorage.setItem('cfgTapper', cfgTapper); 
+    localStorage.setItem('cfgChannelName', cfgChannelName); // Simpan nama channel
+    
+    applyThemeAI(); 
+    if(gameState === 'locked') applyLanguage();
+    applyChannelName(); // Terapkan perubahan langsung ke papan
+}
     </script>
 </body>
 </html>
