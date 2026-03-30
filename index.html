@@ -127,6 +127,7 @@
             }
         }
        /* --- MAGIC RINGS (DIOPTIMASI AGAR TIDAK LAG) --- */
+/* --- MAGIC RINGS (DIOPTIMASI AGAR TIDAK LAG) --- */
 .magic-ring { 
     position: absolute; 
     top: 50%; left: 50%; 
@@ -144,10 +145,6 @@
     will-change: transform, opacity;
 }
 
-/* Drop-shadow bercahaya pada semua elemen di dalam kontainer cincin */
-.magic-ring path { filter: drop-shadow(0 0 2px #00ffff); }
-.magic-ring text { text-shadow: 0 0 8px #00ffff; }
-
 /* Munculkan cincin dan mainkan animasi HANYA saat klimaks */
 .show-rings .magic-ring {
     visibility: visible;
@@ -155,16 +152,17 @@
     transform: scale(1);
 }
 
-.show-rings .ring-1 { animation: spinRing1 12s linear infinite; }
-.show-rings .ring-2 { animation: spinRing2 15s linear infinite; }
+/* Menggunakan alternate agar berayun bolak-balik secara smooth */
+.show-rings .ring-1 { animation: swingRing1 1.5s ease-in-out infinite alternate; }
+.show-rings .ring-2 { animation: swingRing2 1.5s ease-in-out infinite alternate; }
 
-@keyframes spinRing1 { 
-    0% { transform: rotateX(65deg) rotateY(15deg) rotateZ(0deg); }
-    100% { transform: rotateX(65deg) rotateY(15deg) rotateZ(360deg); }
+@keyframes swingRing1 { 
+    0% { transform: rotateX(65deg) rotateY(15deg) rotateZ(-45deg); }
+    100% { transform: rotateX(65deg) rotateY(15deg) rotateZ(45deg); }
 }
-@keyframes spinRing2 { 
-    0% { transform: rotateX(70deg) rotateY(-20deg) rotateZ(0deg); }
-    100% { transform: rotateX(70deg) rotateY(-20deg) rotateZ(-360deg); }
+@keyframes swingRing2 { 
+    0% { transform: rotateX(70deg) rotateY(-20deg) rotateZ(45deg); }
+    100% { transform: rotateX(70deg) rotateY(-20deg) rotateZ(-45deg); }
 }
 
 
@@ -350,11 +348,10 @@
                 <defs>
                     <path id="circlePath1" d="M 100, 100 m -84, 0 a 84,84 0 1,0 168,0 a 84,84 0 1,0 -168,0" fill="none"/>
                 </defs>
-                <path d="M 100, 100 m -96, 0 a 96,96 0 1,0 192,0 a 96,96 0 1,0 -192,0" stroke="#00ffff" stroke-width="1.5" fill="none" filter="drop-shadow(0 0 2px #00ffff)"/>
-                
-                <path d="M 100, 100 m -60, 0 a 60,60 0 1,0 120,0 a 60,60 0 1,0 -120,0" stroke="#00ffff" stroke-width="1.5" fill="none" filter="drop-shadow(0 0 2px #00ffff)"/>
-                
-                <text fill="#00ffff" filter="drop-shadow(0 0 5px #00ffff)" font-size="16" font-family="'Noto Sans Runic', sans-serif" letter-spacing="4">
+                <circle cx="100" cy="100" r="78" stroke="rgba(0, 255, 255, 0.15)" stroke-width="36" fill="none" />
+                <circle cx="100" cy="100" r="96" stroke="#00ffff" stroke-width="1.5" fill="none" />
+                <circle cx="100" cy="100" r="60" stroke="#00ffff" stroke-width="1.5" fill="none" />
+                <text fill="#00ffff" font-size="16" font-family="'Noto Sans Runic', sans-serif" letter-spacing="4">
                     <textPath href="#circlePath1">ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ</textPath>
                 </text>
             </svg>
@@ -363,15 +360,14 @@
                 <defs>
                     <path id="circlePath2" d="M 100, 100 m -84, 0 a 84,84 0 1,0 168,0 a 84,84 0 1,0 -168,0" fill="none"/>
                 </defs>
-                <path d="M 100, 100 m -96, 0 a 96,96 0 1,0 192,0 a 96,96 0 1,0 -192,0" stroke="#00ffff" stroke-width="1.5" fill="none" filter="drop-shadow(0 0 2px #00ffff)"/>
-                
-                <path d="M 100, 100 m -60, 0 a 60,60 0 1,0 120,0 a 60,60 0 1,0 -120,0" stroke="#00ffff" stroke-width="1.5" fill="none" filter="drop-shadow(0 0 2px #00ffff)"/>
-                
-                <text fill="#00ffff" filter="drop-shadow(0 0 5px #00ffff)" font-size="16" font-family="'Noto Sans Runic', sans-serif" letter-spacing="4">
+                <circle cx="100" cy="100" r="78" stroke="rgba(0, 255, 255, 0.15)" stroke-width="36" fill="none" />
+                <circle cx="100" cy="100" r="96" stroke="#00ffff" stroke-width="1.5" fill="none" />
+                <circle cx="100" cy="100" r="60" stroke="#00ffff" stroke-width="1.5" fill="none" />
+                <text fill="#00ffff" font-size="16" font-family="'Noto Sans Runic', sans-serif" letter-spacing="4">
                     <textPath href="#circlePath2">ᛟᛞᛜᛚᛗᛖᛒᛏᛊᛉᛈᛇᛃᛁᚾᚺᚹᚷᚲᚱᚨᚦᚢᠠᛟᛞᛜᛚᛗᛖᛒᛏᛊᛉᛈᛇᛃᛁᚾᚺᚹᚷᚲᚱᚨᚦᚢᠠᛟᛞᛜᛚᛗᛖᛒᛏᛊᛉᛈᛇᛃᛁᚾᚺᚹᚷᚲᚱᚨᚦᚢᠠ</textPath>
                 </text>
             </svg>
-            
+
             <div class="egg-wrapper" id="eggBase">
                 <div class="egg-texture" id="eggTexture"></div>
                 <div class="egg-overlay" id="eggOverlay"></div>
