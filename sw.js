@@ -1,4 +1,4 @@
-const CACHE_NAME = 'telur-studio-v26';
+const CACHE_NAME = 'telur-studio-v27';
 
 // Daftar file yang wajib disimpan di HP
 const urlsToCache = [
